@@ -1,6 +1,6 @@
 {
   "name": "modern-router",
-  "version": "1.0.0",
+  "version": "1.0.1",
   "description": "Separation concerns router, based on susanin and location bar",
   "main": "index.js",
   "scripts": {
