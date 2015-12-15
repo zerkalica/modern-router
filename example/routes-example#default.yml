@@ -1,0 +1,7 @@
+config:
+    routes:
+        TodoApp#index:
+            pattern: "(/)"
+            data:
+                page: TodoAppIndexPage
+        /users/<userId>/todos/<todoId>/view: TodoViewPage
