@@ -1,7 +1,7 @@
 {
-  "name": "reactive-router",
+  "name": "modern-router",
   "version": "0.0.2",
-  "description": "Reactive observable-based router",
+  "description": "Modern observable-based router",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
   },
@@ -31,7 +31,7 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "http://github.com/zerkalica/reactive-router.git"
+    "url": "http://github.com/zerkalica/modern-router.git"
   },
   "keywords": [
     "reactive",

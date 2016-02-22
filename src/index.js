@@ -1,12 +1,12 @@
 /* @flow */
 
-import HistoryRouterLocation from 'reactive-router/HistoryRouterLocation'
-import SusaninRouter from 'reactive-router/SusaninRouter'
+import HistoryRouterLocation from 'modern-router/HistoryRouterLocation'
+import SusaninRouter from 'modern-router/SusaninRouter'
 import {
     createLocationChanges,
     simpleFromLocation,
     locationRedirector
-} from 'reactive-router/browserHelpers'
+} from 'modern-router/browserHelpers'
 
 export {
     locationRedirector,

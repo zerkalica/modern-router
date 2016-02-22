@@ -1,7 +1,7 @@
 reactive-router
 ---------------
 
-Simple client/server router, based on susanin
+Simple separation concerns client/server router, based on susanin
 
 Features
 --------

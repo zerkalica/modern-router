@@ -8,7 +8,7 @@ import type {
     RouteConfig,
     RouterConfig,
     Route
-} from 'reactive-router/i/routerInterfaces'
+} from 'modern-router/i/routerInterfaces'
 
 
 // implements Router

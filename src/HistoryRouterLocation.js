@@ -6,7 +6,7 @@ import type {
     Route,
     Redirector,
     RouterLocation // eslint-disable-line
-} from 'reactive-router/i/routerInterfaces'
+} from 'modern-router/i/routerInterfaces'
 
 // implements RouterLocation
 export default class RouterLocationImpl {

@@ -5,8 +5,8 @@ import type {
     SimpleLocation,
     Router,
     Redirector
-} from 'reactive-router/i/routerInterfaces'
-import {observableFromEvent} from 'reactive-router/utils'
+} from 'modern-router/i/routerInterfaces'
+import {observableFromEvent} from 'modern-router/utils'
 
 export function locationRedirector(location: Location): Redirector {
     return {
