@@ -9,10 +9,10 @@ Features
 -	Can be adapted for client or server
 -	Can build url from route name
 -	Can handle external redirects
--	Config based, (susanin)[https://github.com/nodules/susanin] used as pattern matching engine
--	Modular, used (zen-observable)[https://github.com/zenparsing/zen-observable] for adapt location changes
--	Modern, used (flowtype)[http://flowtype.org], (babel)[http://babeljs.io\]
--	Can be used with old ie browsers with (HTML5-History-API)[https://github.com/devote/HTML5-History-API] polyfill
+-	Config based, [susanin](https://github.com/nodules/susanin) used as pattern matching engine
+-	Modular, used [zen-observable](https://github.com/zenparsing/zen-observable) for adapt location changes
+-	Modern, used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
+-	Can be used with old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
 
 Example
 -------
