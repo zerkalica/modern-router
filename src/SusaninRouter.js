@@ -63,7 +63,7 @@ export default class SusaninRouter {
         const {origin} = route.data
 
         return {
-            url: (origin ? origin : '') + route.build(params),
+            url: (origin || '') + route.build(params),
             isExternal: !!origin
         }
     }

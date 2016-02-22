@@ -5,7 +5,7 @@ import type {
     Router,
     Route,
     Redirector,
-    RouterLocation
+    RouterLocation // eslint-disable-line
 } from 'reactive-router/i/routerInterfaces'
 
 // implements RouterLocation
@@ -32,7 +32,7 @@ export default class RouterLocationImpl {
             query: {}
         };
         this._subscription = locationChanges.subscribe({
-            next({page, query}: Route) {
+            next({page, query}: Route) { // eslint-disable-line
                 currentRoute.page = page
                 currentRoute.query = query
             },

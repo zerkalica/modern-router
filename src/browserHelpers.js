@@ -14,7 +14,7 @@ export function locationRedirector(location: Location): Redirector {
             location.replace(url)
         },
         redirect(url: string): void {
-            location.href = url
+            location.href = url // eslint-disable-line
         }
     }
 }
