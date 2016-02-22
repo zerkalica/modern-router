@@ -68,4 +68,6 @@ export type RouterConfig = SimpleMap<string, RouteConfig>;
 export type RouterLocation = {
     pushState(pageName: ?string, state?: QueryMap): void;
     replaceState(pageName: ?string, state?: QueryMap): void;
+    dispose(): void;
+    isDisposed: boolean;
 }
