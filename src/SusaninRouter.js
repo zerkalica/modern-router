@@ -51,7 +51,7 @@ export default class SusaninRouter {
         })
     }
 
-    getRoute(name: string, params: ?QueryMap = {}): {
+    getRoute(name: string, params?: QueryMap = {}): {
         isExternal: boolean,
         url: string
     } {
@@ -68,7 +68,7 @@ export default class SusaninRouter {
         }
     }
 
-    build(name: string, params: ?QueryMap = {}): string {
+    build(name: string, params?: QueryMap = {}): string {
         return this.getRoute(name, params).url
     }
 

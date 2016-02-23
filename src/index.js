@@ -1,17 +1,6 @@
 /* @flow */
-
-import HistoryRouterLocation from 'modern-router/HistoryRouterLocation'
-import SusaninRouter from 'modern-router/SusaninRouter'
-import {
-    createLocationChanges,
-    simpleFromLocation,
-    locationRedirector
-} from 'modern-router/browserHelpers'
+import createBrowserRouterManager from 'modern-router/createBrowserRouterManager'
 
 export {
-    locationRedirector,
-    createLocationChanges,
-    simpleFromLocation,
-    HistoryRouterLocation,
-    SusaninRouter
+    createBrowserRouterManager
 }

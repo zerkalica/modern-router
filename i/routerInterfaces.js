@@ -10,12 +10,12 @@ export type Route = {
 };
 
 export type Router = {
-    getRoute(name: string, params: ?QueryMap): {
+    getRoute(name: string, params?: QueryMap): {
         isExternal: boolean,
         url: string
     };
-    build(name: string, params: ?QueryMap): string;
-    resolve(path: string, params: ?QueryMap): ?Route;
+    build(name: string, params?: QueryMap): string;
+    resolve(path: string, params: SimpleLocation): ?Route;
 }
 
 export type Redirector = {
@@ -70,4 +70,11 @@ export type RouterLocation = {
     replaceState(pageName: ?string, state?: QueryMap): void;
     dispose(): void;
     isDisposed: boolean;
+}
+
+export type RouterManager = {
+    locationChanges: Observable<?Route, void>;
+    redirector: Redirector;
+    router: Router;
+    location: RouterLocation;
 }

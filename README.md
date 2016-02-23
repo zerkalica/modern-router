@@ -1,5 +1,5 @@
-reactive-router
----------------
+modern-router
+-------------
 
 Simple separation concerns client/server router, based on susanin
 
@@ -20,20 +20,12 @@ Example
 ```js
 // @flow
 import {
-    createLocationChanges,
-    HistoryRouterLocation,
-    SusaninRouter,
-    simpleFromLocation,
-    locationRedirector
-} from 'reactive-router'
+    createBrowserRouterManager
+} from 'modern-router'
 import type {
-    Redirector,
-    Route,
-    RouterLocation,
-    SimpleLocation,
-    Router,
-    RouterConfig
-} from 'reactive-router/i/routerInterfaces'
+    RouterConfig,
+    RouterManager
+} from 'modern-router/i/routerInterfaces'
 
 const config: RouterConfig = {
     'main.simple': {
@@ -66,18 +58,9 @@ const config: RouterConfig = {
     }
 };
 
-const redirector: Redirector = locationRedirector(document.location);
-const defaultLocation: SimpleLocation = simpleFromLocation(document.location);
-const router: Router = new SusaninRouter(config, defaultLocation);
-const locationChanges: Observable<Route, void> = createLocationChanges(window, document.location, router);
-const location: RouterLocation = new HistoryRouterLocation(
-    window.history,
-    locationChanges,
-    redirector,
-    router
-);
+const rm: RouterManager = createBrowserRouterManager(window, config);
 
-locationChanges.subscribe({
+rm.locationChanges.subscribe({
     next(route: Route) {
         console.log('page=', route.page, ', query=', route.query)
     },
@@ -85,7 +68,7 @@ locationChanges.subscribe({
     complete() {}
 })
 
-location.pushState('main.index.complex', {
+rm.location.pushState('main.index.complex', {
     controller: 'index',
     action: 'build',
     id: '1',
@@ -94,17 +77,17 @@ location.pushState('main.index.complex', {
 // page=MyPageWidget, query={controller: 'index', action: 'build', some: 'a', id: '1'}
 // browser url /index/build/1?some=a
 
-location.pushState('some.external', {
+rm.location.pushState('some.external', {
     controller: 'index'
 }); // window.location.href = https://example.com:88/index
 
-const url: string = router.build('main.index.complex', {
+const url: string = rm.router.build('main.index.complex', {
     controller: 'base',
     action: 'main',
     id: '2'
 }); // /base/main/2
 
-router.build('some.external', {
+rm.router.build('some.external', {
     controller: 'main'
 }) // https://example.com:88/main
 

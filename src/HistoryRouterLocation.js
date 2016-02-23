@@ -20,7 +20,7 @@ export default class RouterLocationImpl {
 
     constructor(
         history: History,
-        locationChanges: Observable<Route, void>,
+        locationChanges: Observable<?Route, void>,
         redirector: Redirector,
         router: Router
     ) {
@@ -32,9 +32,11 @@ export default class RouterLocationImpl {
             query: {}
         };
         this._subscription = locationChanges.subscribe({
-            next({page, query}: Route) { // eslint-disable-line
-                currentRoute.page = page
-                currentRoute.query = query
+            next(rec: ?Route) { // eslint-disable-line
+                if (rec) {
+                    currentRoute.page = rec.page
+                    currentRoute.query = rec.query
+                }
             },
             error() {},
             complete() {}
