@@ -4,7 +4,7 @@
         ["babel-plugin-module-alias", [
             {
                 "src": "./src",
-                "expose": "reactive-router"
+                "expose": "modern-router"
             }
         ]],
         "syntax-flow",
