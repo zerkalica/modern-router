@@ -25,7 +25,7 @@ export default class SusaninRouter {
         }
     }
 
-    _addRoute(page: string, config: RouteConfig): void {
+    _addRoute(name: string, config: RouteConfig): void {
         const data = config.data || {}
         const rd: SimpleLocation = {
             ...this._defaultLocation,
@@ -38,12 +38,12 @@ export default class SusaninRouter {
         }
 
         this._susanin.addRoute({
-            page,
+            name,
             pattern: config.pattern,
             defaults: config.defaults,
             conditions: config.conditions,
             data: {
-                page: config.page || page,
+                page: config.page || name,
                 origin,
                 method: 'GET',
                 ...rd

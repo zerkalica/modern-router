@@ -70,6 +70,6 @@
   },
   "dependencies": {
     "susanin": "^1.0.1",
-    "zen-observable": "^0.1.13"
+    "zen-observable": "^0.x.x"
   }
 }
