@@ -10,10 +10,7 @@ export type Route = {
 };
 
 export type Router = {
-    getRoute(name: string, params?: QueryMap): {
-        isExternal: boolean,
-        url: string
-    };
+    isExternal(name: string): boolean;
     build(name: string, params?: QueryMap): string;
     resolve(path: string, params: SimpleLocation): ?Route;
 }

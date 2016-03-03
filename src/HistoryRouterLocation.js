@@ -38,7 +38,9 @@ export default class RouterLocationImpl {
                     currentRoute.query = rec.query
                 }
             },
-            error() {},
+            error(err) {
+                throw err
+            },
             complete() {}
         })
         this.isDisposed = false
@@ -57,14 +59,13 @@ export default class RouterLocationImpl {
     } {
         const name: string = pageName || this._currentRoute.page;
         const query: QueryMap = state || this._currentRoute.query;
-        const {url, isExternal} = this._router.getRoute(name, query);
 
         return {
             // Query already in url
             query: {},
             name,
-            url,
-            isExternal
+            url: this._router.build(name, query),
+            isExternal: this._router.isExternal(name)
         }
     }
 

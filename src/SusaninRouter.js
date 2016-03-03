@@ -51,25 +51,19 @@ export default class SusaninRouter {
         })
     }
 
-    getRoute(name: string, params?: QueryMap = {}): {
-        isExternal: boolean,
-        url: string
-    } {
+    isExternal(name: string): boolean {
+        const router = this._susanin.getRouteByName(name)
+
+        return router && router.data.origin
+    }
+
+    build(name: string, params?: QueryMap = {}): string {
         const route = this._susanin.getRouteByName(name)
         if (!route) {
             throw new Error(`Route not found: ${name}`)
         }
 
-        const {origin} = route.data
-
-        return {
-            url: (origin || '') + route.build(params),
-            isExternal: !!origin
-        }
-    }
-
-    build(name: string, params?: QueryMap = {}): string {
-        return this.getRoute(name, params).url
+        return (route.data.origin || '') + route.build(params)
     }
 
     resolve(path: string, params: SimpleLocation): ?Route {

@@ -77,6 +77,16 @@ rm.location.pushState('main.index.complex', {
 // page=MyPageWidget, query={controller: 'index', action: 'build', some: 'a', id: '1'}
 // browser url /index/build/1?some=a
 
+rm.location.pushState(null, {
+    controller: 'main'
+})
+// page=MyPageWidget, query={controller: 'main', action: 'build', some: 'a', id: '1'}
+// browser url /main/build/1?some=a
+
+rm.location.pushState('main.simple')
+// page=MyPage1, query={controller: 'main', action: 'build', some: 'a', id: '1'}
+// browser url /page1?some=a&id=1&controller=main&action=build
+
 rm.location.pushState('some.external', {
     controller: 'index'
 }); // window.location.href = https://example.com:88/index
@@ -87,6 +97,7 @@ const url: string = rm.router.build('main.index.complex', {
     id: '2'
 }); // /base/main/2
 
+rm.router.isExternal('some.external') // true
 rm.router.build('some.external', {
     controller: 'main'
 }) // https://example.com:88/main
