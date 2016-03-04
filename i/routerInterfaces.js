@@ -33,6 +33,8 @@ export type Route = {
 
  export type RouteData = {
      isFull?: boolean;
+     isExternal?: boolean;
+     isReplace?: boolean;
      hostname?: string;
      port?: string;
      protocol?: string;
@@ -64,26 +66,26 @@ export type RouterConfig = {
     routes: SimpleMap<string, RouteConfig>;
 }
 
-export interface Redirector {
+export type Redirector = {
     redirect(url: string): void;
     replace(url: string): void;
 }
 
-export interface Router {
+export type Router = {
     isExternal(name: string): boolean;
     build(name: string, params?: QueryMap): string;
     resolve(): ?Route;
 }
 
-export interface RouterLocation {
-    pushState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
-    replaceState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
+export type RouterLocation = {
+    set(pageName: ?string, state?: QueryMap): void;
+    update(pageName: ?string, state?: QueryMap): void;
 }
 
-export interface RouterManager {
+export type RouterManager = RouterLocation & {
     changes: Observable<?Route, void>;
     resolve(): ?Route;
     build(name: string, params?: QueryMap = {}): string;
-    pushState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
-    replaceState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
+    set(pageName: ?string, state?: QueryMap): void;
+    update(pageName: ?string, state?: QueryMap): void;
 }

@@ -3,6 +3,7 @@
 import type {
     QueryMap,
     Router,
+    RouteData,
     Route,
     Redirector,
     RouterLocation // eslint-disable-line
@@ -33,7 +34,7 @@ export default class HistoryRouterLocation {
         query: QueryMap,
         name: string,
         url: string,
-        isExternal: boolean
+        data: RouteData
     } {
         const route: Route = this._router.resolve() || defaultRoute;
         const name: string = pageName || route.page;
@@ -48,25 +49,28 @@ export default class HistoryRouterLocation {
             query: {},
             name,
             url: this._router.build(name, query),
-            isExternal: this._router.isExternal(name)
+            data: this._router.getData(name)
         }
     }
 
-    pushState(pageName: ?string, state?: QueryMap, replaceQuery: boolean = true): void {
-        const {query, name, url, isExternal} = this._getParams(pageName, state, replaceQuery)
-        if (isExternal) {
-            this._redirector.redirect(url)
+    set(pageName: ?string, state?: QueryMap, replaceState: boolean = true): void {
+        const {query, name, url, data} = this._getParams(pageName, state, replaceState)
+        if (data.isReplace) {
+            if (data.isExternal) {
+                this._redirector.replace(url)
+            } else {
+                this._history.replaceState(query, name, url)
+            }
         } else {
-            this._history.pushState(query, name, url)
+            if (data.isExternal) {
+                this._redirector.redirect(url)
+            } else {
+                this._history.pushState(query, name, url)
+            }
         }
     }
 
-    replaceState(pageName: ?string, state?: QueryMap, replaceQuery: boolean = true): void {
-        const {query, name, url, isExternal} = this._getParams(pageName, state, replaceQuery)
-        if (isExternal) {
-            this._redirector.replace(url)
-        } else {
-            this._history.replaceState(query, name, url)
-        }
+    update(pageName: ?string, state?: QueryMap): void {
+        this.set(pageName, state, false)
     }
 }

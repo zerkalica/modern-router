@@ -72,7 +72,7 @@ rm.changes.subscribe({
     complete() {}
 })
 
-rm.pushState('main.index.complex', {
+rm.update('main.index.complex', {
     controller: 'index',
     action: 'build',
     id: '1',
@@ -81,21 +81,21 @@ rm.pushState('main.index.complex', {
 // page=MyPageWidget, query={controller: 'index', action: 'build', some: 'a', id: '1'}
 // browser url /index/build/1?some=a
 
-rm.pushState(null, {
+rm.update(null, {
     controller: 'main'
 })
 // page=MyPageWidget, query={controller: 'main', action: 'build', some: 'a', id: '1'}
 // browser url /main/build/1?some=a
 
-rm.pushState('main.simple')
+rm.update('main.simple')
 // page=MyPage1, query={controller: 'main', action: 'build', some: 'a', id: '1'}
 // browser url /page1?some=a&id=1&controller=main&action=build
 
-rm.pushState('main.simple', null, true)
+rm.set('main.simple')
 // page=MyPage1, query={}
 // browser url /page1
 
-rm.pushState('some.external', {
+rm.update('some.external', {
     controller: 'index'
 }); // window.location.href = https://example.com:88/index
 

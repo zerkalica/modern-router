@@ -92,6 +92,7 @@ export default class SusaninRouter {
             protocol: rd.protocol,
             method: rd.method || 'GET',
             isExternal,
+            isReplace: cd.isReplace || false,
             isFull: isExternal || (
                 cd.isFull === undefined
                     ? this._defaultIsFull
@@ -108,10 +109,10 @@ export default class SusaninRouter {
         })
     }
 
-    isExternal(name: string): boolean {
+    getData(name: string): RouteData {
         const route = this._susanin.getRouteByName(name)
         const data: RouteSusaninData = route.getData();
-        return route && data.isExternal
+        return data
     }
 
     build(name: string, params?: QueryMap = {}): string {

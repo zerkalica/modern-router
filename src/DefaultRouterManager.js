@@ -32,11 +32,11 @@ export default class DefaultRouterManager {
         return this._router.build(name, params)
     }
 
-    pushState(pageName: ?string, state?: QueryMap): void {
-        this._location.pushState(pageName, state)
+    set(pageName: ?string, state?: QueryMap): void {
+        this._location.set(pageName, state)
     }
 
-    replaceState(pageName: ?string, state?: QueryMap): void {
-        this._location.replaceState(pageName, state)
+    update(pageName: ?string, state?: QueryMap): void {
+        this._location.update(pageName, state)
     }
 }
