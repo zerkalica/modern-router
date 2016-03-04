@@ -1,3 +1,4 @@
+RouterManager
 /* @flow */
 
 type SimpleMap<V, K> = {[id: V]: K};
@@ -8,17 +9,6 @@ export type Route = {
     page: string;
     query: QueryMap;
 };
-
-export type Router = {
-    isExternal(name: string): boolean;
-    build(name: string, params?: QueryMap): string;
-    resolve(path: string, params: SimpleLocation): ?Route;
-}
-
-export type Redirector = {
-    redirect(url: string): void;
-    replace(url: string): void;
-}
 
 /**
  * @example
@@ -40,38 +30,60 @@ export type Redirector = {
  }
  * @see https://github.com/nodules/susanin
  */
+
+ export type RouteData = {
+     isFull?: boolean;
+     hostname?: string;
+     port?: string;
+     protocol?: string;
+     method?: string;
+ }
+
 export type RouteConfig = {
     pattern: string;
     defaults?: SimpleMap<string, string>;
     conditions?: SimpleMap<string, string|Array<string>>;
     page?: string;
-    data?: {
-        hostname?: string;
-        port?: string;
-        protocol?: string;
-        method?: string;
-    };
+    data?: RouteData;
 };
 
-export type SimpleLocation = {
+export type RouteDataDefaults = {
     hostname: string;
     port: string;
     protocol: string;
     method: string;
 }
 
-export type RouterConfig = SimpleMap<string, RouteConfig>;
-
-export type RouterLocation = {
-    pushState(pageName: ?string, state?: QueryMap): void;
-    replaceState(pageName: ?string, state?: QueryMap): void;
-    dispose(): void;
-    isDisposed: boolean;
+export type SimpleLocation = RouteDataDefaults & {
+    pathname: string;
+    search: string;
 }
 
-export type RouterManager = {
-    locationChanges: Observable<?Route, void>;
-    redirector: Redirector;
-    router: Router;
-    location: RouterLocation;
+export type RouterConfig = {
+    isFull?: boolean;
+    routes: SimpleMap<string, RouteConfig>;
+}
+
+export interface Redirector {
+    redirect(url: string): void;
+    replace(url: string): void;
+}
+
+export interface Router {
+    isExternal(name: string): boolean;
+    build(name: string, params?: QueryMap): string;
+    resolve(): ?Route;
+}
+
+export interface RouterLocation {
+    pushState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
+    replaceState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
+}
+
+export interface RouterManager {
+    changes: Observable<?Route, void>;
+    resolve(): ?Route;
+    build(name: string, params?: QueryMap = {}): string;
+    pushState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
+    replaceState(pageName: ?string, state?: QueryMap, replaceQuery?: boolean): void;
 }

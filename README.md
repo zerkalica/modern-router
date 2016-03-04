@@ -28,39 +28,43 @@ import type {
 } from 'modern-router/i/routerInterfaces'
 
 const config: RouterConfig = {
-    'main.simple': {
-        pattern : '/page1',
-        page: 'MyPage1'
-    },
-    'main.index.complex': {
-        pattern : '/(<controller>(/<action>(/<id>)))',
-        page: 'MyPageWidget',
-        data: {
-            method: 'GET'
+    // generate full url by default
+    isFull: false,
+    routes: {
+        'main.simple': {
+            pattern : '/page1',
+            page: 'MyPage1'
         },
-        conditions: {
-            controller: ['index', 'crud'],
-            action: ['build', 'some'],
-            id: '\\d{3,4}'
+        'main.index.complex': {
+            pattern : '/(<controller>(/<action>(/<id>)))',
+            page: 'MyPageWidget',
+            data: {
+                method: 'GET'
+            },
+            conditions: {
+                controller: ['index', 'crud'],
+                action: ['build', 'some'],
+                id: '\\d{3,4}'
+            },
+            defaults: {
+                controller: 'index',
+                action: 'build'
+            }
         },
-        defaults: {
-            controller: 'index',
-            action: 'build'
-        }
-    },
-    'some.external': {
-        pattern: '/(<controller>)',
-        data: {
-            hostname: 'example.com',
-            port: '88',
-            protocol: 'https:'
+        'some.external': {
+            pattern: '/(<controller>)',
+            data: {
+                hostname: 'example.com',
+                port: '88',
+                protocol: 'https:'
+            }
         }
     }
 };
 
 const rm: RouterManager = createBrowserRouterManager(window, config);
 
-rm.locationChanges.subscribe({
+rm.changes.subscribe({
     next(route: Route) {
         console.log('page=', route.page, ', query=', route.query)
     },
@@ -68,7 +72,7 @@ rm.locationChanges.subscribe({
     complete() {}
 })
 
-rm.location.pushState('main.index.complex', {
+rm.pushState('main.index.complex', {
     controller: 'index',
     action: 'build',
     id: '1',
@@ -77,28 +81,31 @@ rm.location.pushState('main.index.complex', {
 // page=MyPageWidget, query={controller: 'index', action: 'build', some: 'a', id: '1'}
 // browser url /index/build/1?some=a
 
-rm.location.pushState(null, {
+rm.pushState(null, {
     controller: 'main'
 })
 // page=MyPageWidget, query={controller: 'main', action: 'build', some: 'a', id: '1'}
 // browser url /main/build/1?some=a
 
-rm.location.pushState('main.simple')
+rm.pushState('main.simple')
 // page=MyPage1, query={controller: 'main', action: 'build', some: 'a', id: '1'}
 // browser url /page1?some=a&id=1&controller=main&action=build
 
-rm.location.pushState('some.external', {
+rm.pushState('main.simple', null, true)
+// page=MyPage1, query={}
+// browser url /page1
+
+rm.pushState('some.external', {
     controller: 'index'
 }); // window.location.href = https://example.com:88/index
 
-const url: string = rm.router.build('main.index.complex', {
+const url: string = rm.build('main.index.complex', {
     controller: 'base',
     action: 'main',
     id: '2'
 }); // /base/main/2
 
-rm.router.isExternal('some.external') // true
-rm.router.build('some.external', {
+rm.build('some.external', {
     controller: 'main'
 }) // https://example.com:88/main
 

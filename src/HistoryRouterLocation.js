@@ -8,58 +8,41 @@ import type {
     RouterLocation // eslint-disable-line
 } from 'modern-router/i/routerInterfaces'
 
-// implements RouterLocation
-export default class RouterLocationImpl {
-    isDisposed: boolean;
+const defaultRoute: Route = {
+    page: '',
+    query: {}
+};
 
+// implements RouterLocation
+export default class HistoryRouterLocation {
     _history: History;
     _router: Router;
-    _currentRoute: Route;
-    _subscription: Subscription;
     _redirector: Redirector;
 
     constructor(
         history: History,
-        locationChanges: Observable<?Route, void>,
         redirector: Redirector,
         router: Router
     ) {
         this._history = history
         this._router = router
         this._redirector = redirector
-        const currentRoute: Route = this._currentRoute = {
-            page: '',
-            query: {}
-        };
-        this._subscription = locationChanges.subscribe({
-            next(rec: ?Route) { // eslint-disable-line
-                if (rec) {
-                    currentRoute.page = rec.page
-                    currentRoute.query = rec.query
-                }
-            },
-            error(err) {
-                throw err
-            },
-            complete() {}
-        })
-        this.isDisposed = false
     }
 
-    dispose(): void {
-        this._subscription.unsubscribe()
-        this.isDisposed = true
-    }
-
-    _getParams(pageName: ?string, state: ?QueryMap): {
+    _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): {
         query: QueryMap,
         name: string,
         url: string,
         isExternal: boolean
     } {
-        const name: string = pageName || this._currentRoute.page;
-        const query: QueryMap = state || this._currentRoute.query;
-
+        const route: Route = this._router.resolve() || defaultRoute;
+        const name: string = pageName || route.page;
+        const query: QueryMap = replaceQuery
+            ? state || {}
+            : {
+                ...state || {},
+                ...route.query
+            };
         return {
             // Query already in url
             query: {},
@@ -69,8 +52,8 @@ export default class RouterLocationImpl {
         }
     }
 
-    pushState(pageName: ?string, state?: QueryMap): void {
-        const {query, name, url, isExternal} = this._getParams(pageName, state)
+    pushState(pageName: ?string, state?: QueryMap, replaceQuery: boolean = true): void {
+        const {query, name, url, isExternal} = this._getParams(pageName, state, replaceQuery)
         if (isExternal) {
             this._redirector.redirect(url)
         } else {
@@ -78,8 +61,8 @@ export default class RouterLocationImpl {
         }
     }
 
-    replaceState(pageName: ?string, state?: QueryMap): void {
-        const {query, name, url, isExternal} = this._getParams(pageName, state)
+    replaceState(pageName: ?string, state?: QueryMap, replaceQuery: boolean = true): void {
+        const {query, name, url, isExternal} = this._getParams(pageName, state, replaceQuery)
         if (isExternal) {
             this._redirector.replace(url)
         } else {
