@@ -1,7 +1,7 @@
 modern-router
 -------------
 
-Simple separation concerns client/server router, based on susanin.
+Simple separation concerns client/server router, based on [susanin](https://github.com/nodules/susanin).
 
 Features
 --------
