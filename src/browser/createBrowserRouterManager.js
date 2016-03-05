@@ -3,10 +3,14 @@
 import HistoryRouterLocation from 'modern-router/HistoryRouterLocation'
 import SusaninRouter from 'modern-router/SusaninRouter'
 import {
-    createRouterState,
     createBrowserLocationGetter,
     BrowserLocationRedirector
 } from 'modern-router/browser/browserHelpers'
+
+import {
+    observableAll,
+    observableFromEvent
+} from 'modern-router/browser/utils'
 
 import type {
     RouterLocation,
@@ -31,7 +35,10 @@ export default function createBrowserRouterManager(
     );
 
     return new DefaultRouterManager(
-        createRouterState(window, router),
+        observableAll([
+            location.changes,
+            observableFromEvent(window, 'popstate')
+        ]).map(router.resolve),
         router,
         location
     )

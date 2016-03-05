@@ -1,12 +1,9 @@
 /* @flow */
 
 import type {
-    Route,
     SimpleLocation,
-    Router,
     Redirector // eslint-disable-line
 } from 'modern-router/i/routerInterfaces'
-import {observableFromEvent} from 'modern-router/browser/utils'
 
 // implements Redirector
 export class BrowserLocationRedirector {
@@ -40,11 +37,4 @@ export function createBrowserLocationGetter(location: Location): () => SimpleLoc
     return function locationGetter(): SimpleLocation {
         return simpleFromLocation(location)
     }
-}
-
-export function createRouterState(
-    window: Object,
-    router: Router
-): Observable<?Route, void> {
-    return observableFromEvent(window, 'popstate').map(() => router.resolve())
 }

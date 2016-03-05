@@ -33,7 +33,6 @@ export type Route = {
 
  export type RouteData = {
      isFull?: boolean;
-     isExternal?: boolean;
      isReplace?: boolean;
      hostname?: string;
      port?: string;
@@ -72,7 +71,7 @@ export type Redirector = {
 }
 
 export type Router = {
-    isExternal(name: string): boolean;
+    getData(name: string): RouteData;
     build(name: string, params?: QueryMap): string;
     resolve(): ?Route;
 }
