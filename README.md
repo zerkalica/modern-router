@@ -104,7 +104,7 @@ rm.update(null, {id: '2'})
 
 rm.update('main.simple2')
 // page=MyPage2, query={id: '2'}
-// browser url http://localhost/page2?&id=2
+// browser url http://localhost/page2?id=2
 
 rm.set('some.external', {
     controller: 'index'
