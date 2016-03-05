@@ -61,7 +61,7 @@ export default class HistoryRouterLocation {
             query: {},
             name,
             url: this._router.build(name, query),
-            isExternal: false,
+            isExternal: data.isExternal,
             isReplace: data.isReplace
         }
     }

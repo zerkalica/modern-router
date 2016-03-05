@@ -1,18 +1,20 @@
 modern-router
 -------------
 
-Simple separation concerns client/server router, based on susanin
+Simple separation concerns client/server router, based on susanin.
 
 Features
 --------
 
+-	Config-based, can be configured from json
+-	Build url string from route name and parameters
+-	Can inherit previous route state: rm.set('page', {id: '1'}); rm.update(null, {id: '2'})
+-	Can handle routes to external resources
 -	Can be adapted for client or server
--	Can build url from route name
--	Can handle external redirects
--	Config based, [susanin](https://github.com/nodules/susanin) used as pattern matching engine
--	Modular, used [zen-observable](https://github.com/zenparsing/zen-observable) for adapt location changes
--	Modern, used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
--	Can be used with old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
+-	[susanin](https://github.com/nodules/susanin) used as pattern matching engine
+-	Used [zen-observable](https://github.com/zenparsing/zen-observable) for adapt location changes
+-	Used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
+-	Can be used in old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
 
 Example
 -------
@@ -34,6 +36,11 @@ const config: RouterConfig = {
         'main.simple': {
             pattern : '/page1',
             page: 'MyPage1'
+        },
+        'main.simple2': {
+            isFull: true,
+            pattern : '/page2',
+            page: 'MyPage2'
         },
         'main.index.complex': {
             pattern : '/(<controller>(/<action>(/<id>)))',
@@ -87,15 +94,19 @@ rm.update(null, {
 // page=MyPageWidget, query={controller: 'main', action: 'build', some: 'a', id: '1'}
 // browser url /main/build/1?some=a
 
-rm.update('main.simple')
-// page=MyPage1, query={controller: 'main', action: 'build', some: 'a', id: '1'}
-// browser url /page1?some=a&id=1&controller=main&action=build
+rm.set('main.simple', {id: '1'})
+// page=MyPage1, query={id: '1'}
+// browser url /page1?id=1
 
-rm.set('main.simple')
-// page=MyPage1, query={}
-// browser url /page1
+rm.update(null, {id: '2'})
+// page=MyPage1, query={id: '2'}
+// browser url /page1?&id=2
 
-rm.update('some.external', {
+rm.update('main.simple2')
+// page=MyPage2, query={id: '2'}
+// browser url http://localhost/page2?&id=2
+
+rm.set('some.external', {
     controller: 'index'
 }); // window.location.href = https://example.com:88/index
 
