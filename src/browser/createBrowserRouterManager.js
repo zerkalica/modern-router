@@ -25,7 +25,7 @@ export default function createBrowserRouterManager(
     window: Object,
     config: RouterConfig
 ): RouterManager {
-    const docLocation: Location = window.document.location;
+    const docLocation: Location = window.history.location || window.location;
 
     const router: Router = new SusaninRouter(config, createBrowserLocationGetter(docLocation));
     const location: RouterLocation = new HistoryRouterLocation(
