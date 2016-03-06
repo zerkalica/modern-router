@@ -28,7 +28,7 @@ export default function createBrowserRouterManager(
     const docLocation: Location = window.history.location || window.location;
 
     const router: Router = new SusaninRouter(config, createBrowserLocationGetter(docLocation));
-    const location: RouterLocation = new HistoryRouterLocation(
+    const routerLocation: RouterLocation = new HistoryRouterLocation(
         window.history,
         new BrowserLocationRedirector(docLocation),
         router
@@ -36,10 +36,10 @@ export default function createBrowserRouterManager(
 
     return new DefaultRouterManager(
         observableAll([
-            location.changes,
+            routerLocation.changes,
             observableFromEvent(window, 'popstate')
         ]).map(router.resolve),
         router,
-        location
+        routerLocation
     )
 }

@@ -16,6 +16,39 @@ Features
 -	Used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
 -	Can be used in old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
 
+Interfaces
+----------
+
+```js
+type RouterManager = RouterLocation & {
+    changes: Observable<?Route, void>;
+    resolve(): ?Route;
+    build(name: string, params?: QueryMap = {}): string;
+    set(pageName: ?string, state?: QueryMap): void;
+    update(pageName: ?string, state?: QueryMap): void;
+}
+```
+
+```js
+type RouterConfig = {
+   isFull?: boolean;
+   routes: {[id: string]: {
+      pattern: string;
+      defaults?: {[id: string]: string};
+      conditions?: {[id: string]: string|Array<string>};
+      page?: string;
+      data?: {
+         isFull?: boolean;
+         isReplace?: boolean;
+         hostname?: string;
+         port?: string;
+         protocol?: string;
+         method?: string;
+      }
+   }}
+}
+```
+
 Example
 -------
 
