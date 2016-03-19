@@ -130,7 +130,7 @@ export default class SusaninRouter {
 
     resolve: () => ?Route;
 
-    _resolve(): ?Route {
+    _resolve(): Route {
         const {path, params} = routerLocationToParams(this._getCurrentLocation())
         const rec = this._susanin.findFirst(path, params)
         if (rec) {
@@ -142,6 +142,9 @@ export default class SusaninRouter {
             }
         }
 
-        return null
+        return {
+            page: null,
+            query: {}
+        }
     }
 }

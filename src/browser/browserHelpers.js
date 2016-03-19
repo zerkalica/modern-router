@@ -28,7 +28,7 @@ function simpleFromLocation(location: Location): SimpleLocation {
         search: location.search,
         hostname: location.hostname,
         port: location.port,
-        protocol: location.protocol.substring(1),
+        protocol: location.protocol,
         method: 'GET'
     }
 }

@@ -6,7 +6,7 @@ type SimpleMap<V, K> = {[id: V]: K};
 export type QueryMap = SimpleMap<string, string|Array<string>>;
 
 export type Route = {
-    page: string;
+    page: ?string;
     query: QueryMap;
 };
 
@@ -73,7 +73,7 @@ export type Redirector = {
 export type Router = {
     getData(name: string): RouteData;
     build(name: string, params?: QueryMap): string;
-    resolve(): ?Route;
+    resolve(): Route;
 }
 
 export type RouterLocation = {
@@ -83,7 +83,7 @@ export type RouterLocation = {
 
 export type RouterManager = RouterLocation & {
     changes: Observable<?Route, void>;
-    resolve(): ?Route;
+    resolve(): Route;
     build(name: string, params?: QueryMap = {}): string;
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;

@@ -24,7 +24,7 @@ export default class DefaultRouterManager {
         this._location = location
     }
 
-    resolve(): ?Route {
+    resolve(): Route {
         return this._router.resolve()
     }
 
