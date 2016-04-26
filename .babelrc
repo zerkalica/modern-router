@@ -1,5 +1,5 @@
 {
-    "presets": ["es2015", "stage-0"],
+    "presets": ["es2015-loose", "stage-0"],
     "plugins": [
         ["babel-plugin-module-alias", [
             {
@@ -10,7 +10,6 @@
         "syntax-flow",
         "espower",
         "flow-comments",
-        "transform-flow-strip-types",
-        "transform-runtime"
+        "transform-flow-strip-types"
     ]
 }

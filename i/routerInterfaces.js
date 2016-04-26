@@ -88,3 +88,6 @@ export type RouterManager = RouterLocation & {
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;
 }
+
+export type Renderer<Element, Widget> = (widget: Widget, error:? Error) => Element;
+export type PageMap<Widget> = {[id: string]: Widget};
