@@ -65,24 +65,22 @@ export type RouterConfig = {
     routes: SimpleMap<string, RouteConfig>;
 }
 
-export type Redirector = {
+export type AbstractLocation = {
     redirect(url: string): void;
     replace(url: string): void;
+    getParams(): SimpleLocation;
+    pushState(query: Object, name: string, url: string): void;
+    replaceState(query: Object, name: string, url: string): void;
 }
 
 export type Router = {
+    find(options: LocationParams): Route;
     getData(name: string): RouteData;
     build(name: string, params?: QueryMap): string;
-    resolve(): Route;
 }
 
-export type RouterLocation = {
-    set(pageName: ?string, state?: QueryMap): void;
-    update(pageName: ?string, state?: QueryMap): void;
-}
-
-export type RouterManager = RouterLocation & {
-    changes: Observable<?Route, void>;
+export type RouterManager = {
+    changes: Observable<Route, Error>;
     resolve(): Route;
     build(name: string, params?: QueryMap = {}): string;
     set(pageName: ?string, state?: QueryMap): void;

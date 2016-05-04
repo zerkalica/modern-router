@@ -1,19 +1,11 @@
 /* @flow */
 
-import HistoryRouterLocation from 'modern-router/HistoryRouterLocation'
 import SusaninRouter from 'modern-router/SusaninRouter'
-import {
-    createBrowserLocationGetter,
-    BrowserLocationRedirector
-} from 'modern-router/browser/browserHelpers'
-
-import {
-    observableAll,
-    observableFromEvent
-} from 'modern-router/browser/utils'
+import BrowserLocation from 'modern-router/browser/BrowserLocation'
+import observableFromEvent from 'modern-router/browser/observableFromEvent'
 
 import type {
-    RouterLocation,
+    AbstractLocation,
     Router,
     RouterConfig,
     RouterManager
@@ -25,21 +17,17 @@ export default function createBrowserRouterManager(
     window: Object,
     config: RouterConfig
 ): RouterManager {
-    const docLocation: Location = window.history.location || window.location;
-
-    const router: Router = new SusaninRouter(config, createBrowserLocationGetter(docLocation));
-    const routerLocation: RouterLocation = new HistoryRouterLocation(
-        window.history,
-        new BrowserLocationRedirector(docLocation),
-        router
+    const location: AbstractLocation = new BrowserLocation(
+        window.history.location || window.location,
+        window.history
     );
+    const popState: Observable<void, Error> = observableFromEvent(window, 'popstate');
+
+    const router: Router = new SusaninRouter(config, location.getParams());
 
     return new DefaultRouterManager(
-        observableAll([
-            routerLocation.changes,
-            observableFromEvent(window, 'popstate')
-        ]).map(router.resolve),
+        location,
         router,
-        routerLocation
+        popState.map(() => location)
     )
 }

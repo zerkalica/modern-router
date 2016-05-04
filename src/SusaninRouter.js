@@ -14,12 +14,7 @@ import type {
 
 type LocationParams = {
     path: string;
-    params: {
-        hostname: string;
-        port: string;
-        protocol: string;
-        method: string;
-    }
+    params: RouteDataDefaults;
 }
 
 function routerLocationToParams(location: SimpleLocation): LocationParams {
@@ -53,21 +48,19 @@ type RouteSusaninData = {
 // implements Router
 export default class SusaninRouter {
     _susanin: Susanin;
-    _getCurrentLocation: () => SimpleLocation;
     _defaultIsFull: boolean;
     _defaultLocation: RouteDataDefaults;
 
     constructor(
         config: RouterConfig,
-        getCurrentLocation: () => SimpleLocation
+        currentLocaiton: SimpleLocation
     ) {
         const {routes, isFull} = config
         this._defaultIsFull = isFull || false
         this._susanin = new Susanin()
         const keys = Object.keys(routes)
-        this._getCurrentLocation = getCurrentLocation
         this._defaultLocation = {
-            ...getCurrentLocation(),
+            ...currentLocaiton,
             pathname: undefined,
             search: undefined
         }
@@ -126,11 +119,9 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    resolve: () => ?Route = () => this._resolve();
-
-    _resolve(): Route {
-        const {path, params} = routerLocationToParams(this._getCurrentLocation())
-        const rec = this._susanin.findFirst(path, params)
+    find(options: LocationParams): Route {
+        const params = routerLocationToParams(options)
+        const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
