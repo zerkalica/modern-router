@@ -1,7 +1,7 @@
 /* @flow */
+import Observable from 'zen-observable'
 
 import SusaninRouter from 'modern-router/SusaninRouter'
-import ServerLocation from 'modern-router/server/ServerLocation'
 
 import type {
     AbstractLocation,
@@ -17,12 +17,10 @@ function noop() {}
 const routerCache: Map<string, Router> = new Map();
 
 export default function createServerRouterManager(
-    req: http$IncomingMessage,
-    res: http$ServerResponse,
+    location: AbstractLocation,
     config: RouterConfig
 ): RouterManager {
-    const location: AbstractLocation = new ServerLocation(req, res);
-    const popState: Observable<void, Error> = new Observable(noop)
+    const popState: Observable<void, Error> = new Observable(noop);
     const params = location.getParams()
     const key: string = `${params.protocol}-${params.host}-${params.port}`;
     let router: Router = routerCache.get(key)

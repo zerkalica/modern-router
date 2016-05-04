@@ -10,7 +10,7 @@ Features
 -	Build url string from route name and parameters
 -	Can inherit previous route state: rm.set('page', {id: '1'}); rm.update(null, {id: '2'})
 -	Can handle routes to external resources
--	Can be adapted for client or server
+-	Isomorphic: can be used on client or server side
 -	[susanin](https://github.com/nodules/susanin) used as pattern matching engine
 -	Used [zen-observable](https://github.com/zenparsing/zen-observable) for adapt location changes
 -	Used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
@@ -20,9 +20,9 @@ Interfaces
 ----------
 
 ```js
-type RouterManager = RouterLocation & {
-    changes: Observable<?Route, void>;
-    resolve(): ?Route;
+type RouterManager = {
+    changes: Observable<Route, Error>;
+    resolve(): Route;
     build(name: string, params?: QueryMap = {}): string;
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;
@@ -31,26 +31,26 @@ type RouterManager = RouterLocation & {
 
 ```js
 type RouterConfig = {
-   isFull?: boolean;
-   routes: {[id: string]: {
-      pattern: string;
-      defaults?: {[id: string]: string};
-      conditions?: {[id: string]: string|Array<string>};
-      page?: string;
-      data?: {
-         isFull?: boolean;
-         isReplace?: boolean;
-         hostname?: string;
-         port?: string;
-         protocol?: string;
-         method?: string;
-      }
-   }}
+    isFull?: boolean;
+    routes: {[id: string]: {
+        pattern: string;
+        defaults?: {[id: string]: string};
+        conditions?: {[id: string]: string|Array<string>};
+        page?: string;
+        data?: {
+            isFull?: boolean;
+            isReplace?: boolean;
+            hostname?: string;
+            port?: string;
+            protocol?: string;
+            method?: string;
+        }
+    }}
 }
 ```
 
-Example
--------
+Client usage
+------------
 
 ```js
 // @flow
@@ -153,4 +153,55 @@ rm.build('some.external', {
     controller: 'main'
 }) // https://example.com:88/main
 
+```
+
+Server usage
+------------
+
+```js
+/* @flow */
+/* eslint-env node */
+/* eslint-disable no-console */
+
+import http from 'http'
+import {
+    RawHttpServerLocation,
+    createServerRouterManager
+} from 'modern-router/server'
+import type {
+    Route,
+    RouteConfig,
+    RouterManager
+} from 'modern-router/i/routerInterfaces'
+
+const config: RouteConfig = {
+    routes: {
+        'main.simple': {
+            pattern: '/page1',
+            page: 'MyPage1'
+        },
+        'main.simple2': {
+            isFull: true,
+            pattern: '/page2',
+            page: 'MyPage2'
+        }
+    }
+};
+
+
+http.createServer((req: http$IncomingMessage, res: http$ServerResponse) => {
+    const routerManager: RouterManager = createServerRouterManager(
+        new RawHttpServerLocation((req: any), res),
+        config
+    );
+    const route: Route = routerManager.resolve();
+    // console.log(route)
+    if (!route.page) {
+        res.writeHeader(404)
+        res.end(route.page ? '' : 'Page not found')
+    }
+    res.end(JSON.stringify(route))
+}).listen(8080)
+
+console.log('Server started at https://localhost:8080/')
 ```

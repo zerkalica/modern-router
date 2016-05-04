@@ -1,6 +1,6 @@
 /* eslint-disable */
 'use strict';
 
-var createServerRouterManager = require('./dist/server/createServerRouterManager')
+var server = require('./dist/server/index')
 
-module.exports = createServerRouterManager
+module.exports = server
