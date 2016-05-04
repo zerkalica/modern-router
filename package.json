@@ -1,6 +1,6 @@
 {
   "name": "modern-router",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "description": "Modern observable-based router",
   "publishConfig": {
     "registry": "https://registry.npmjs.org"
