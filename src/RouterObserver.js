@@ -22,12 +22,22 @@ export default class RouterObserver<Element, Widget> {
         this._ErrorPage = ErrorPage
     }
 
+    _render(page: Widget): void {
+        try {
+            this._renderer(page)
+        } catch (err) {
+            this.error(err)
+        }
+    }
+
     next(route: Route): void {
         const pages = this._pages
         if (!pages[route.page]) {
-            throw new PageNotFoundError(route.page)
+            const err = new PageNotFoundError(route.page)
+            this.error(err)
+            return
         }
-        this._renderer(pages[route.page])
+        this._render(pages[route.page])
     }
 
     error(err: Error): void {

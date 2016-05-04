@@ -107,8 +107,6 @@ export default class SusaninRouter {
             conditions: config.conditions,
             data
         })
-
-        this.resolve = this._resolve.bind(this)
     }
 
     getData(name: string): RouteData {
@@ -128,7 +126,7 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    resolve: () => ?Route;
+    resolve: () => ?Route = () => this._resolve();
 
     _resolve(): Route {
         const {path, params} = routerLocationToParams(this._getCurrentLocation())
