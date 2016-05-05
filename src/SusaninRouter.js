@@ -8,9 +8,10 @@ import type {
     QueryMap,
     SimpleLocation,
     RouteConfig,
-    RouterConfig,
-    Route
+    RouterConfig
 } from 'modern-router/i/routerInterfaces'
+
+import Route from 'modern-router/Route'
 
 type LocationParams = {
     path: string;
@@ -102,12 +103,6 @@ export default class SusaninRouter {
         })
     }
 
-    getData(name: string): RouteData {
-        const route = this._susanin.getRouteByName(name)
-        const data: RouteSusaninData = route.getData();
-        return data
-    }
-
     build(name: string, params?: QueryMap = {}): string {
         const route = this._susanin.getRouteByName(name)
         if (!route) {
@@ -125,15 +120,9 @@ export default class SusaninRouter {
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
-            return {
-                page: data.page,
-                query
-            }
+            return new Route(data.page, query)
         }
 
-        return {
-            page: null,
-            query: {}
-        }
+        return new Route()
     }
 }

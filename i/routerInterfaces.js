@@ -75,7 +75,6 @@ export type AbstractLocation = {
 
 export type Router = {
     find(options: LocationParams): Route;
-    getData(name: string): RouteData;
     build(name: string, params?: QueryMap): string;
 }
 

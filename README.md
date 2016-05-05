@@ -56,7 +56,7 @@ Client usage
 // @flow
 import {
     createBrowserRouterManager
-} from 'modern-router'
+} from 'modern-router/browser'
 import type {
     RouterConfig,
     RouterManager

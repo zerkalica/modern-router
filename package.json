@@ -71,6 +71,7 @@
   "dependencies": {
     "es6-error": "^2.1.1",
     "susanin": "^1.0.1",
-    "zen-observable": "^0.x.x"
+    "zen-observable": "^0.x.x",
+    "observable-helpers": "^0.x.x"
   }
 }

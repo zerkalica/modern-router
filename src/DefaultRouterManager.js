@@ -5,17 +5,15 @@ import type {
     QueryMap,
     Router,
     RouteData,
-    Route,
     AbstractLocation,
     RouterManager // eslint-disable-line
 } from 'modern-router/i/routerInterfaces'
 
-import ObserverBroker from 'modern-router/ObserverBroker'
+import AbstractRouterManager from 'modern-router/AbstractRouterManager'
+import {ObserverBroker} from 'observable-helpers'
+import Route from 'modern-router/Route'
 
-const defaultRoute: Route = {
-    page: '',
-    query: {}
-};
+const defaultRoute = new Route();
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;
@@ -43,7 +41,7 @@ class LocationObserver {
 }
 
 // implements RouterManager
-export default class DefaultRouterManager {
+export default class DefaultRouterManager extends AbstractRouterManager {
     _router: Router;
     _location: AbstractLocation;
     _observer: SubscriptionObserver<Route, Error>;
@@ -56,6 +54,7 @@ export default class DefaultRouterManager {
         router: Router,
         observableLocation: Observable<AbstractLocation, Error>
     ) {
+        super()
         this._router = router
         this._location = location
 
@@ -88,7 +87,7 @@ export default class DefaultRouterManager {
         isExternal: boolean
     } {
         const route: Route = this.resolve() || defaultRoute;
-        const name: string = pageName || route.page;
+        const name: string = pageName || route.page || '';
         const st: QueryMap = state || {};
         const query: QueryMap = replaceQuery
             ? st
