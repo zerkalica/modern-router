@@ -5,10 +5,6 @@ type SimpleMap<V, K> = {[id: V]: K};
 
 export type QueryMap = SimpleMap<string, string|Array<string>>;
 
-export type Route = {
-    page: ?string;
-    query: QueryMap;
-};
 
 /**
  * @example
@@ -31,14 +27,20 @@ export type Route = {
  * @see https://github.com/nodules/susanin
  */
 
- export type RouteData = {
-     isFull?: boolean;
-     isReplace?: boolean;
-     hostname?: string;
-     port?: string;
-     protocol?: string;
-     method?: string;
- }
+export type RouteData = {
+    isFull?: boolean;
+    isReplace?: boolean;
+    hostname?: string;
+    port?: string;
+    protocol?: string;
+    method?: string;
+}
+
+export type Route = {
+    page: ?string;
+    query: QueryMap;
+    data: RouteData;
+};
 
 export type RouteConfig = {
     pattern: string;

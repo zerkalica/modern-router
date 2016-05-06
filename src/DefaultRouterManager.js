@@ -95,7 +95,7 @@ export default class DefaultRouterManager extends AbstractRouterManager {
                 ...route.query,
                 ...st
             };
-        const data: RouteData = this._router.getData(name);
+        const data: RouteData = route.data;
 
         return {
             // Query already in url

@@ -39,6 +39,7 @@ type RouteSusaninData = {
     page: string;
     isFull: boolean;
     isExternal: boolean;
+    isReplace: boolean;
     hostname: string;
     port: string;
     protocol: string;
@@ -120,7 +121,7 @@ export default class SusaninRouter {
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
-            return new Route(data.page, query)
+            return new Route(data.page, query, data)
         }
 
         return new Route()
