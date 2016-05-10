@@ -13,7 +13,7 @@ export default class Route {
     constructor(
         page: ?string,
         query: ?QueryMap,
-        data: RouteData
+        data: RouteData = {}
     ) {
         this.page = page || null
         this.query = query || {}
