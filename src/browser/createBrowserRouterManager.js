@@ -9,7 +9,7 @@ import type {
     Router,
     RouterConfig,
     RouterManager
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 import DefaultRouterManager from 'modern-router/DefaultRouterManager'
 

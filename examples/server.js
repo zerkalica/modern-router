@@ -9,11 +9,11 @@ import {
 } from 'modern-router/server'
 import type {
     Route,
-    RouteConfig,
+    RouterConfig,
     RouterManager
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
-const config: RouteConfig = {
+const config: RouterConfig = {
     routes: {
         'main.simple': {
             pattern: '/page1',

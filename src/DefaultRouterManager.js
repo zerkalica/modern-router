@@ -2,18 +2,19 @@
 import Observable from 'zen-observable'
 
 import type {
+    Route,
     QueryMap,
     Router,
     RouteData,
     AbstractLocation,
     RouterManager // eslint-disable-line
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 import AbstractRouterManager from 'modern-router/AbstractRouterManager'
 import {ObserverBroker} from 'observable-helpers'
-import Route from 'modern-router/Route'
+import RouteImpl from 'modern-router/Route'
 
-const defaultRoute = new Route();
+const defaultRoute = new RouteImpl();
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;

@@ -3,7 +3,7 @@
 import type {
     QueryMap,
     RouteData
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 export default class Route {
     page: ?string;
@@ -13,10 +13,13 @@ export default class Route {
     constructor(
         page: ?string,
         query: ?QueryMap,
-        data: RouteData = {}
+        data?: RouteData
     ) {
         this.page = page || null
         this.query = query || {}
-        this.data = data
+        this.data = data || {
+            isExternal: false,
+            isReplace: false
+        }
     }
 }

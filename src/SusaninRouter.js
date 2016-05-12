@@ -3,20 +3,18 @@
 import Susanin from 'susanin'
 
 import type {
+    Route,
+    QueryMap,
     RouteData,
     RouteDataDefaults,
-    QueryMap,
     SimpleLocation,
+    RouteConfigData,
     RouteConfig,
-    RouterConfig
-} from 'modern-router/i/routerInterfaces'
+    RouterConfig,
+    LocationParams
+} from 'modern-router'
 
-import Route from 'modern-router/Route'
-
-type LocationParams = {
-    path: string;
-    params: RouteDataDefaults;
-}
+import RouteImpl from 'modern-router/Route'
 
 function routerLocationToParams(location: SimpleLocation): LocationParams {
     return {
@@ -30,7 +28,11 @@ function routerLocationToParams(location: SimpleLocation): LocationParams {
     }
 }
 
-function getOrigin(rd: SimpleLocation): string {
+function getOrigin(rd: {
+    port: ?string,
+    hostname: string,
+    protocol: string
+}): string {
     const port = rd.port ? (':' + rd.port) : ''
     return rd.protocol + '//' + rd.hostname + port
 }
@@ -41,7 +43,7 @@ type RouteSusaninData = {
     isExternal: boolean;
     isReplace: boolean;
     hostname: string;
-    port: string;
+    port: ?string;
     protocol: string;
     method: string;
     origin: string;
@@ -55,16 +57,17 @@ export default class SusaninRouter {
 
     constructor(
         config: RouterConfig,
-        currentLocaiton: SimpleLocation
+        cl: SimpleLocation
     ) {
         const {routes, isFull} = config
         this._defaultIsFull = isFull || false
         this._susanin = new Susanin()
         const keys = Object.keys(routes)
         this._defaultLocation = {
-            ...currentLocaiton,
-            pathname: undefined,
-            search: undefined
+            hostname: cl.hostname,
+            port: cl.port,
+            protocol: cl.protocol,
+            method: cl.method
         }
         for (let i = 0, l = keys.length; i < l; i++) {
             this._addRoute(keys[i], routes[keys[i]])
@@ -72,12 +75,16 @@ export default class SusaninRouter {
     }
 
     _addRoute(name: string, config: RouteConfig): void {
-        const cd: RouteData = config.data || {};
-        const rd: SimpleLocation & RouteData = {
-            ...this._defaultLocation,
-            ...cd
+        const cd: RouteConfigData = config.data || {};
+        const dl = this._defaultLocation
+        const rd: RouteDataDefaults = {
+            hostname: cd.hostname || dl.hostname,
+            port: cd.port || dl.port,
+            protocol: cd.protocol || dl.protocol,
+            method: cd.method || dl.method
         };
-        const isExternal = !!(cd.port || cd.hostname || cd.protocol)
+
+        const isExternal: boolean = !!(cd.port || cd.hostname || cd.protocol);
 
         const data: RouteSusaninData = {
             page: config.page || name,
@@ -115,15 +122,15 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationParams): Route {
-        const params = routerLocationToParams(options)
+    find(options: SimpleLocation): Route {
+        const params: LocationParams = routerLocationToParams(options);
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
-            return new Route(data.page, query, data)
+            return new RouteImpl(data.page, query, (data: RouteData))
         }
 
-        return new Route()
+        return new RouteImpl()
     }
 }

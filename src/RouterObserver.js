@@ -3,7 +3,7 @@ import type {
     Route,
     PageMap,
     Renderer
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 
@@ -32,7 +32,7 @@ export default class RouterObserver<Element, Widget> {
 
     next(route: Route): void {
         const pages = this._pages
-        if (!pages[route.page]) {
+        if (!route.page || !pages[route.page]) {
             const err = new PageNotFoundError(route.page)
             this.error(err)
             return

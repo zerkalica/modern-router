@@ -7,7 +7,7 @@ export default class PageNotFoundError extends Err {
 
     constructor(
         pageName?: ?string,
-        message: string = 'Page not found'
+        message?: string = 'Page not found'
     ) {
         super(message + (pageName ? (' ' + pageName) : ''))
         this.pageName = pageName

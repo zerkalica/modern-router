@@ -3,11 +3,11 @@
 import type {
     SimpleLocation,
     AbstractLocation // eslint-disable-line
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 import {parse} from 'url'
 
-type Req = {
+interface Req {
     method: string;
     url: string;
     headers: Object;
@@ -24,8 +24,8 @@ export default class RawHttpServerLocation {
     constructor(
         req: Req,
         res: http$ServerResponse,
-        isHttps: boolean = false,
-        isTrustedProxy: boolean = true
+        isHttps?: boolean = false,
+        isTrustedProxy?: boolean = true
     ) {
         this._req = req
         this._res = res
@@ -97,7 +97,7 @@ export default class RawHttpServerLocation {
         const parts = parse((req.url: any))
 
         const result: SimpleLocation = {
-            pathname: parts.pathname,
+            pathname: parts.pathname || '',
             search: parts.search || '',
             hostname,
             port,

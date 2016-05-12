@@ -8,7 +8,7 @@ import type {
     Router,
     RouterConfig,
     RouterManager
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 import DefaultRouterManager from 'modern-router/DefaultRouterManager'
 
@@ -22,8 +22,8 @@ export default function createServerRouterManager(
 ): RouterManager {
     const popState: Observable<void, Error> = new Observable(noop);
     const params = location.getParams()
-    const key: string = `${params.protocol}-${params.host}-${params.port}`;
-    let router: Router = routerCache.get(key)
+    const key: string = `${params.protocol}-${params.hostname}-${params.port}`;
+    let router: ?Router = routerCache.get(key)
     if (!router) {
         router = new SusaninRouter(config, params);
         routerCache.set(key, router)

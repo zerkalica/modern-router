@@ -3,7 +3,7 @@
 import type {
     SimpleLocation,
     AbstractLocation // eslint-disable-line
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 // implements AbstractLocation
 export default class BrowserLocation {

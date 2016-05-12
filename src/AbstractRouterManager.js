@@ -4,7 +4,7 @@ import type {
     Route,
     QueryMap,
     RouterManager // eslint-disable-line
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 // implements RouterManager
 export default class AbstractRouterManager {
