@@ -1,8 +1,15 @@
 /* @flow */
 
+import type {IncomingMessage} from 'http'
+
 type SimpleMap<V, K> = {[id: V]: K};
 
 declare module 'modern-router' {
+    declare interface ServerResponse extends IncomingMessage {
+        writeHeader(code: number, headers?: Object): void;
+        end(chunk?: string): void;
+    }
+
     declare type QueryMap = SimpleMap<string, string|Array<string>>;
     /**
      * @example

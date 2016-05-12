@@ -8,6 +8,7 @@ import {
     createServerRouterManager
 } from 'modern-router/server'
 import type {
+    ServerResponse,
     Route,
     RouterConfig,
     RouterManager
@@ -28,7 +29,7 @@ const config: RouterConfig = {
 };
 
 
-http.createServer((req: http$IncomingMessage, res: http$ServerResponse) => {
+http.createServer((req: http$IncomingMessage, res: ServerResponse) => {
     const routerManager: RouterManager = createServerRouterManager(
         new RawHttpServerLocation((req: any), res),
         config

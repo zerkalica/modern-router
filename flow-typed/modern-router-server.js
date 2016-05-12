@@ -1,6 +1,7 @@
 /* @flow */
 
 import type {
+    ServerResponse,
     AbstractLocation,
     RouterConfig,
     RouterManager
@@ -21,7 +22,7 @@ declare module 'modern-router/server' {
     declare class RawHttpServerLocation {
         constructor(
             req: Req,
-            res: http$ServerResponse,
+            res: ServerResponse,
             isHttps?: boolean,
             isTrustedProxy?: boolean
         ): void;

@@ -1,6 +1,7 @@
 /* @flow */
 
 import type {
+    ServerResponse,
     LocationData,
     AbstractLocation // eslint-disable-line
 } from 'modern-router'
@@ -16,14 +17,14 @@ interface Req {
 // implements AbstractLocation
 export default class RawHttpServerLocation {
     _req: Req;
-    _res: http$ServerResponse;
+    _res: ServerResponse;
 
     _protocol: string;
     _isTrustedProxy: boolean;
 
     constructor(
         req: Req,
-        res: http$ServerResponse,
+        res: ServerResponse,
         isHttps?: boolean = false,
         isTrustedProxy?: boolean = true
     ) {
