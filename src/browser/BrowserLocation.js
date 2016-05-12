@@ -1,7 +1,7 @@
 /* @flow */
 
 import type {
-    SimpleLocation,
+    LocationData,
     AbstractLocation // eslint-disable-line
 } from 'modern-router'
 
@@ -31,7 +31,7 @@ export default class BrowserLocation {
         this._history.replaceState(query, name, url)
     }
 
-    getParams(): SimpleLocation {
+    getParams(): LocationData {
         const location = this._location
 
         return {

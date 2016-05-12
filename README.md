@@ -60,7 +60,7 @@ import {
 import type {
     RouterConfig,
     RouterManager
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 const config: RouterConfig = {
     // generate full url by default
@@ -172,7 +172,7 @@ import type {
     Route,
     RouteConfig,
     RouterManager
-} from 'modern-router/i/routerInterfaces'
+} from 'modern-router'
 
 const config: RouteConfig = {
     routes: {

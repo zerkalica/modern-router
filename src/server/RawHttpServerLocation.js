@@ -1,7 +1,7 @@
 /* @flow */
 
 import type {
-    SimpleLocation,
+    LocationData,
     AbstractLocation // eslint-disable-line
 } from 'modern-router'
 
@@ -87,7 +87,7 @@ export default class RawHttpServerLocation {
         }
     }
 
-    getParams(): SimpleLocation {
+    getParams(): LocationData {
         const req = this._req
         const {
             hostname,
@@ -96,7 +96,7 @@ export default class RawHttpServerLocation {
         } = this._getHostNameFromHeaders(req.headers)
         const parts = parse((req.url: any))
 
-        const result: SimpleLocation = {
+        const result: LocationData = {
             pathname: parts.pathname || '',
             search: parts.search || '',
             hostname,

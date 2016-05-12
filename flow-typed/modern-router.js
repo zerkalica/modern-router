@@ -42,39 +42,28 @@ declare module 'modern-router' {
         data?: RouteConfigData;
     }
 
-    declare interface RouteDataDefaults {
+    declare interface RouterConfig {
+        isFull?: boolean;
+        routes: SimpleMap<string, RouteConfig>;
+    }
+
+    declare interface LocationDataBase {
         hostname: string;
         port: ?string;
         protocol: string;
         method: string;
     }
 
-    declare interface SimpleLocation extends RouteDataDefaults {
+    declare interface LocationData extends LocationDataBase {
         pathname: string;
         search: string;
     }
 
-    declare interface LocationParams {
-        path: string;
-        params: RouteDataDefaults;
-    }
-
-    declare interface RouterConfig {
-        isFull?: boolean;
-        routes: SimpleMap<string, RouteConfig>;
-    }
-
-    declare interface AbstractLocation {
-        redirect(url: string): void;
-        replace(url: string): void;
-        getParams(): SimpleLocation;
-        pushState(query: QueryMap, name: string, url: string): void;
-        replaceState(query: QueryMap, name: string, url: string): void;
-    }
     declare interface RouteData {
         isExternal: boolean;
         isReplace: boolean;
     }
+
     declare interface Route {
         page: ?string;
         query: QueryMap;
@@ -82,7 +71,7 @@ declare module 'modern-router' {
     }
 
     declare interface Router {
-        find(options: SimpleLocation): Route;
+        find(options: LocationData): Route;
         build(name: string, params?: QueryMap): string;
     }
 
@@ -97,12 +86,12 @@ declare module 'modern-router' {
     declare type Renderer<Element, Widget> = (widget: Widget, error:? Error) => Element;
     declare type PageMap<Widget> = {[id: string]: Widget};
 
-    declare class AbstractRouterManager {
-        changes: Observable<?Route, void>;
-        resolve(): ?Route;
-        build(name: string, params?: QueryMap): string;
-        pushState(pageName: ?string, state?: QueryMap): void;
-        replaceState(pageName: ?string, state?: QueryMap): void;
+    declare interface AbstractLocation {
+        redirect(url: string): void;
+        replace(url: string): void;
+        getParams(): LocationData;
+        pushState(query: QueryMap, name: string, url: string): void;
+        replaceState(query: QueryMap, name: string, url: string): void;
     }
 
     declare class PageNotFoundError extends Error {

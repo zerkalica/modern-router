@@ -10,7 +10,6 @@ import type {
     RouterManager // eslint-disable-line
 } from 'modern-router'
 
-import AbstractRouterManager from 'modern-router/AbstractRouterManager'
 import {ObserverBroker} from 'observable-helpers'
 import RouteImpl from 'modern-router/Route'
 
@@ -42,7 +41,7 @@ class LocationObserver {
 }
 
 // implements RouterManager
-export default class DefaultRouterManager extends AbstractRouterManager {
+export default class DefaultRouterManager {
     _router: Router;
     _location: AbstractLocation;
     _observer: SubscriptionObserver<Route, Error>;
@@ -55,7 +54,6 @@ export default class DefaultRouterManager extends AbstractRouterManager {
         router: Router,
         observableLocation: Observable<AbstractLocation, Error>
     ) {
-        super()
         this._router = router
         this._location = location
 

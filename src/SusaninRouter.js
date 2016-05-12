@@ -6,17 +6,21 @@ import type {
     Route,
     QueryMap,
     RouteData,
-    RouteDataDefaults,
-    SimpleLocation,
+    LocationDataBase,
+    LocationData,
     RouteConfigData,
     RouteConfig,
-    RouterConfig,
-    LocationParams
+    RouterConfig
 } from 'modern-router'
 
 import RouteImpl from 'modern-router/Route'
 
-function routerLocationToParams(location: SimpleLocation): LocationParams {
+type LocationParams = {
+    path: string;
+    params: LocationDataBase;
+}
+
+function routerLocationToParams(location: LocationData): LocationParams {
     return {
         path: location.pathname + location.search,
         params: {
@@ -53,11 +57,11 @@ type RouteSusaninData = {
 export default class SusaninRouter {
     _susanin: Susanin;
     _defaultIsFull: boolean;
-    _defaultLocation: RouteDataDefaults;
+    _defaultLocation: LocationDataBase;
 
     constructor(
         config: RouterConfig,
-        cl: SimpleLocation
+        cl: LocationData
     ) {
         const {routes, isFull} = config
         this._defaultIsFull = isFull || false
@@ -77,7 +81,7 @@ export default class SusaninRouter {
     _addRoute(name: string, config: RouteConfig): void {
         const cd: RouteConfigData = config.data || {};
         const dl = this._defaultLocation
-        const rd: RouteDataDefaults = {
+        const rd: LocationDataBase = {
             hostname: cd.hostname || dl.hostname,
             port: cd.port || dl.port,
             protocol: cd.protocol || dl.protocol,
@@ -122,7 +126,7 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: SimpleLocation): Route {
+    find(options: LocationData): Route {
         const params: LocationParams = routerLocationToParams(options);
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
