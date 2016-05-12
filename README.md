@@ -20,10 +20,10 @@ Interfaces
 ----------
 
 ```js
-type RouterManager = {
+interface RouterManager {
     changes: Observable<Route, Error>;
     resolve(): Route;
-    build(name: string, params?: QueryMap = {}): string;
+    build(name: string, params?: QueryMap): string;
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;
 }
