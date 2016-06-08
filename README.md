@@ -21,7 +21,7 @@ Interfaces
 
 ```js
 interface RouterManager {
-    changes: Observable<Route, Error>;
+    route: Route;
     resolve(): Route;
     build(name: string, params?: QueryMap): string;
     set(pageName: ?string, state?: QueryMap): void;
@@ -104,7 +104,7 @@ const config: RouterConfig = {
 
 const rm: RouterManager = createBrowserRouterManager(window, config);
 
-rm.changes.subscribe({
+Observable.from(rm.route).subscribe({
     next(route: Route) {
         console.log('page=', route.page, ', query=', route.query)
     },
@@ -194,7 +194,7 @@ http.createServer((req: http$IncomingMessage, res: http$ServerResponse) => {
         new RawHttpServerLocation((req: any), res),
         config
     );
-    const route: Route = routerManager.resolve();
+    const route: Route = routerManager.route
     // console.log(route)
     if (!route.page) {
         res.writeHeader(404)
