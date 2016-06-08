@@ -69,8 +69,8 @@
   },
   "dependencies": {
     "es6-error": "^2.1.1",
+    "observable-helpers": "0.0.6",
     "susanin": "^1.0.1",
-    "zen-observable": "^0.x.x",
-    "observable-helpers": "^0.x.x"
+    "symbol-observable": "^0.2.4"
   }
 }

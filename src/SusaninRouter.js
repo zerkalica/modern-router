@@ -126,15 +126,15 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationData): Route {
+    find(options: LocationData, observable?: Observable<Route, Error>): Route {
         const params: LocationParams = routerLocationToParams(options);
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
-            return new RouteImpl(data.page, query, (data: RouteData))
+            return (new RouteImpl(data.page, query, (data: RouteData), observable): any)
         }
 
-        return new RouteImpl()
+        return (new RouteImpl(): any)
     }
 }

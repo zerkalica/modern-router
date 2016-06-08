@@ -71,7 +71,7 @@ declare module 'modern-router' {
         isReplace: boolean;
     }
 
-    declare interface Route {
+    declare interface Route extends $ObservableObject<Route, Error> {
         page: ?string;
         query: QueryMap;
         data: RouteData;
@@ -83,8 +83,7 @@ declare module 'modern-router' {
     }
 
     declare interface RouterManager {
-        changes: Observable<Route, Error>;
-        resolve(): Route;
+        route: Route;
         build(name: string, params?: QueryMap): string;
         set(pageName: ?string, state?: QueryMap): void;
         update(pageName: ?string, state?: QueryMap): void;

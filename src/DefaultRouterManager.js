@@ -1,6 +1,4 @@
 /* @flow */
-import Observable from 'zen-observable'
-
 import type {
     Route,
     QueryMap,
@@ -13,7 +11,7 @@ import type {
 import {ObserverBroker} from 'observable-helpers'
 import RouteImpl from 'modern-router/Route'
 
-const defaultRoute = new RouteImpl();
+const defaultRoute: Route = (new RouteImpl(): any)
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;
@@ -28,7 +26,7 @@ class LocationObserver {
     }
 
     next(location: AbstractLocation): void {
-        this._setLocation.setLocation(location)
+        this._setLocation(location)
     }
 
     complete(): void {
@@ -44,10 +42,11 @@ class LocationObserver {
 export default class DefaultRouterManager {
     _router: Router;
     _location: AbstractLocation;
+    _observable: Observable<Route, Error>;
     _observer: SubscriptionObserver<Route, Error>;
     _subscription: Subscription;
 
-    changes: Observable<Route, Error>;
+    route: Route;
 
     constructor(
         location: AbstractLocation,
@@ -59,18 +58,17 @@ export default class DefaultRouterManager {
 
         const broker = new ObserverBroker()
         this._observer = broker
-        this.changes = broker.observable
-
-        const self = this
-
-        function setLocation(loc: AbstractLocation): void {
-            self._location = loc
-            self._next()
-        }
-
+        this._observable = broker.observable
         this._subscription = observableLocation.subscribe(
-            new LocationObserver(setLocation, this._observer)
+            new LocationObserver(
+                (loc: AbstractLocation) => {
+                    this._location = loc
+                    this._next()
+                },
+                this._observer
+            )
         )
+        this.route = this._resolve()
     }
 
     dispose(): void {
@@ -85,16 +83,16 @@ export default class DefaultRouterManager {
         isReplace: boolean,
         isExternal: boolean
     } {
-        const route: Route = this.resolve() || defaultRoute;
-        const name: string = pageName || route.page || '';
-        const st: QueryMap = state || {};
+        const route: Route = this._resolve()
+        const name: string = pageName || route.page || ''
+        const st: QueryMap = state || {}
         const query: QueryMap = replaceQuery
             ? st
             : {
                 ...route.query,
                 ...st
-            };
-        const data: RouteData = route.data;
+            }
+        const data: RouteData = route.data
 
         return {
             // Query already in url
@@ -132,16 +130,17 @@ export default class DefaultRouterManager {
         }
     }
 
+    _resolve(): Route {
+        return this._router.find(this._location.getParams(), this._observable) || defaultRoute
+    }
+
     _next(): void {
-        this._observer.next(this.resolve())
+        this.route = this._resolve()
+        this._observer.next(this.route)
     }
 
     update(pageName: ?string, state?: QueryMap): void {
         this.set(pageName, state, false)
-    }
-
-    resolve(): Route {
-        return this._router.find(this._location.getParams())
     }
 
     build(name: string, params?: QueryMap = {}): string {

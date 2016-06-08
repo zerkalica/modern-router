@@ -34,7 +34,7 @@ http.createServer((req: http$IncomingMessage, res: ServerResponse) => {
         new RawHttpServerLocation((req: any), res),
         config
     );
-    const route: Route = routerManager.resolve();
+    const route: Route = routerManager.route
     // console.log(route)
     if (!route.page) {
         res.writeHeader(404)
