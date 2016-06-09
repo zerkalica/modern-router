@@ -1,4 +1,5 @@
 /* @flow */
+import {mapObservable} from 'observable-helpers'
 
 import SusaninRouter from 'modern-router/SusaninRouter'
 
@@ -31,6 +32,6 @@ export default function createServerRouterManager(
     return new DefaultRouterManager(
         location,
         router,
-        popState.map(() => location)
+        mapObservable(popState, () => location)
     )
 }

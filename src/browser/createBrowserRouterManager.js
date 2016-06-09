@@ -2,7 +2,8 @@
 
 import SusaninRouter from 'modern-router/SusaninRouter'
 import BrowserLocation from 'modern-router/browser/BrowserLocation'
-import {mapObservable, observableFromEvent} from 'observable-helpers/browser'
+import {observableFromEvent} from 'observable-helpers/browser'
+import {mapObservable} from 'observable-helpers'
 
 import type {
     AbstractLocation,
