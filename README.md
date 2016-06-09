@@ -22,7 +22,6 @@ Interfaces
 ```js
 interface RouterManager {
     route: Route;
-    resolve(): Route;
     build(name: string, params?: QueryMap): string;
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;

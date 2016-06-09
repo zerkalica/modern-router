@@ -6,8 +6,6 @@ import type {
     RouteData
 } from 'modern-router'
 
-import symbolObservable from 'symbol-observable'
-
 export default class Route {
     page: ?string;
     query: QueryMap;
@@ -26,7 +24,7 @@ export default class Route {
             isReplace: false
         }
         if (observable) {
-            (this: Object)[symbolObservable] = () => observable
+            (this: Object)[Symbol.observable] = () => observable
         }
     }
 }
