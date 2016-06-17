@@ -1,9 +1,9 @@
 /* @flow */
 
-import createServerRouterManager from 'modern-router/server/createServerRouterManager'
+import ServerRouterManagerFactory from 'modern-router/server/ServerRouterManagerFactory'
 import RawHttpServerLocation from 'modern-router/server/RawHttpServerLocation'
 
 export {
     RawHttpServerLocation,
-    createServerRouterManager
+    ServerRouterManagerFactory
 }

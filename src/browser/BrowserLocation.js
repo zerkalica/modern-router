@@ -5,14 +5,23 @@ import type {
     AbstractLocation // eslint-disable-line
 } from 'modern-router'
 
+import {observableFromEvent} from 'observable-helpers/browser'
+import {mapObservable} from 'observable-helpers'
+
+interface BrowserLocationProps {
+    location: Location;
+    history: History;
+}
+
 // implements AbstractLocation
 export default class BrowserLocation {
     _location: Location;
     _history: History;
-
-    constructor(location: Location, history: History) {
-        this._location = location
-        this._history = history
+    constructor(win: BrowserLocationProps) {
+        this._location = win.history.location || win.location
+        this._history = win.history;
+        (this: Object)[Symbol.observable] = () =>
+            mapObservable(observableFromEvent(win, 'popstate'), () => this)
     }
 
     replace(url: string): void {

@@ -45,6 +45,7 @@
     ".flowconfig",
     "README.md",
     "LICENSE",
+    "i",
     "dist",
     "flow-typed"
   ],

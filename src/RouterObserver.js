@@ -30,14 +30,15 @@ export default class RouterObserver<Element, Widget> {
         }
     }
 
-    next(route: Route): void {
+    next(route: ?Route): void {
         const pages = this._pages
-        if (!route.page || !pages[route.page]) {
-            const err = new PageNotFoundError(route.page)
+        const page: ?string = route ? route.page : null
+        if (!page || !pages[page]) {
+            const err = new PageNotFoundError(page)
             this.error(err)
             return
         }
-        this._render(pages[route.page])
+        this._render(pages[page])
     }
 
     error(err: Error): void {

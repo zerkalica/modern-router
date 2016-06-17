@@ -7,13 +7,13 @@ Features
 --------
 
 -	Config-based, can be configured from json
--	Build url string from route name and parameters
+-	Reversable: can build url string from route name and parameters
 -	Can inherit previous route state: rm.set('page', {id: '1'}); rm.update(null, {id: '2'})
 -	Can handle routes to external resources
 -	Isomorphic: can be used on client or server side
 -	[susanin](https://github.com/nodules/susanin) used as pattern matching engine
--	Used [zen-observable](https://github.com/zenparsing/zen-observable) for adapt location changes
--	Used [flowtype](http://flowtype.org), [babel](http://babeljs.io)
+-	Needs Observable polyfill for location changes
+-	Used [flowtype](http://flowtype.org) definitions
 -	Can be used in old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
 
 Interfaces
@@ -21,30 +21,132 @@ Interfaces
 
 ```js
 interface RouterManager {
+
+    /**
+     * Parsed observable route
+     * @type {[type]}
+     */
     route: Route;
+
+    /**
+     * Build url by page id
+     *
+     * @param  name:    string        Page id
+     * @param  params?: QueryMap      page params
+     * @return url
+     */
     build(name: string, params?: QueryMap): string;
     set(pageName: ?string, state?: QueryMap): void;
     update(pageName: ?string, state?: QueryMap): void;
 }
 ```
 
+### Configuration
+
 ```js
-type RouterConfig = {
+
+type SimpleMap<V, K> = {[id: V]: K};
+
+/**
+ * Page matching parameters
+ */
+declare interface RouteConfigData {
+    /**
+     * Generate full url or not, overrides isFull in RouterConfig
+     */
     isFull?: boolean;
-    routes: {[id: string]: {
-        pattern: string;
-        defaults?: {[id: string]: string};
-        conditions?: {[id: string]: string|Array<string>};
-        page?: string;
-        data?: {
-            isFull?: boolean;
-            isReplace?: boolean;
-            hostname?: string;
-            port?: string;
-            protocol?: string;
-            method?: string;
-        }
-    }}
+
+    /**
+     * On client do location.replaceState or location.pushState
+     */
+    isReplace?: boolean;
+
+    /**
+     * Match route by hostname
+     *
+     * On server side, if one server on multiple hosts
+     */
+    hostname?: string;
+
+    /**
+     * Match route by port
+     *
+     * On server side, if one configuration on multiple servers
+     */
+    port?: string;
+
+    /**
+     * Match route by protocol
+     *
+     * On server side, if one configuration on multiple servers
+     */
+    protocol?: string;
+
+    /**
+     * Match route by http method
+     *
+     * On server side
+     */
+    method?: string;
+}
+
+declare interface RouteConfig {
+    /**
+     * Route pattern
+     *
+     * @example
+     * /(<controller>(/<action>(/<id>)))
+     *
+     * @see https://github.com/nodules/susanin
+     */
+    pattern: string;
+
+    /**
+     * Default values for pattern
+     *
+     * @example
+     * ```js
+     * defaults: {
+     *    controller : 'index',
+     *    action : 'build'
+     * }
+     * ```
+     */
+    defaults?: SimpleMap<string, string>;
+
+    /**
+     * Conditions regexp map for pattern matching
+     *
+     * @example
+     * ```js
+     * conditions: {
+     *    id : '\\d{3,4}',
+     * }
+     * ```
+     */
+    conditions?: SimpleMap<string, string|string[]>;
+
+    /**
+     * Internal page id
+     */
+    page?: string;
+
+    /**
+     * Page matching parameters
+     */
+    data?: RouteConfigData;
+}
+
+declare interface RouterConfig {
+    /**
+     * Generate full url by default ?
+     */
+    isFull?: boolean;
+
+    /**
+     * Route map
+     */
+    routes: SimpleMap<string, RouteConfig>;
 }
 ```
 

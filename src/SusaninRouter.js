@@ -3,7 +3,6 @@
 import Susanin from 'susanin'
 
 import type {
-    Route,
     QueryMap,
     RouteData,
     LocationDataBase,
@@ -13,7 +12,7 @@ import type {
     RouterConfig
 } from 'modern-router'
 
-import RouteImpl from 'modern-router/Route'
+import Route from 'modern-router/Route'
 
 type LocationParams = {
     path: string;
@@ -126,15 +125,15 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationData, observable?: Observable<Route, Error>): Route {
+    find(options: LocationData, observable?: Observable<Route, Error>): ?Route {
         const params: LocationParams = routerLocationToParams(options);
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData();
-            return (new RouteImpl(data.page, query, (data: RouteData), observable): any)
+            return new Route(data.page, query, (data: RouteData), observable)
         }
 
-        return (new RouteImpl(): any)
+        return null
     }
 }

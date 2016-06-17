@@ -1,23 +1,22 @@
 /* @flow */
 
 import type {
-    Route as IRoute,
     QueryMap,
     RouteData
 } from 'modern-router'
 
 export default class Route {
-    page: ?string;
+    page: string;
     query: QueryMap;
     data: RouteData;
 
     constructor(
-        page: ?string,
+        page: string,
         query: ?QueryMap,
         data?: RouteData,
-        observable?: Observable<IRoute, Error>
+        observable?: Observable<Route, Error>
     ) {
-        this.page = page || null
+        this.page = page
         this.query = query || {}
         this.data = data || {
             isExternal: false,

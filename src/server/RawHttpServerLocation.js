@@ -1,10 +1,11 @@
 /* @flow */
 
 import type {
-    ServerResponse,
     LocationData,
     AbstractLocation // eslint-disable-line
 } from 'modern-router'
+
+import type {ServerResponse} from 'modern-router/i/fixes'
 
 import {parse} from 'url'
 
@@ -13,6 +14,9 @@ interface Req {
     url: string;
     headers: Object;
 }
+
+
+function noop() {}
 
 // implements AbstractLocation
 export default class RawHttpServerLocation {
@@ -31,14 +35,15 @@ export default class RawHttpServerLocation {
         this._req = req
         this._res = res
         this._protocol = isHttps ? 'https' : 'http'
-        this._isTrustedProxy = isTrustedProxy
+        this._isTrustedProxy = isTrustedProxy;
+        (this: Object)[Symbol.observable] = () => new Observable(noop)
     }
 
-    replace(url: string): void { // eslint-disable-line
+    replace(url: string): void {
         this.redirect(url)
     }
 
-    redirect(url: string): void { // eslint-disable-line
+    redirect(url: string): void {
         this._res.writeHead(301, {
             Location: url
         })
@@ -60,22 +65,22 @@ export default class RawHttpServerLocation {
     } {
         const host: string = this._isTrustedProxy
             ? (headers['x-forwarded-host'] || headers.host)
-            : headers.host;
+            : headers.host
 
         // IPv6 literal support
         const offset: number = host[0] === '['
             ? host.indexOf(']') + 1
-            : 0;
+            : 0
 
-        const index: number = host.indexOf(':', offset);
+        const index: number = host.indexOf(':', offset)
 
         const hostname: string = index !== -1
             ? host.substring(0, index)
-            : host;
+            : host
 
         const port: string = index !== -1
             ? host.substring(index + 1)
-            : '';
+            : ''
 
         const protocol: string = this._isTrustedProxy
             ? (headers['x-forwared-proto'] || this._protocol)
@@ -104,8 +109,7 @@ export default class RawHttpServerLocation {
             port,
             protocol,
             method: req.method
-        };
-        // console.log(result)
+        }
 
         return result
     }

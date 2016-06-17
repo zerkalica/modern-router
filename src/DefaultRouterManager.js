@@ -8,18 +8,16 @@ import type {
     RouterManager // eslint-disable-line
 } from 'modern-router'
 
+import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 import {ObserverBroker} from 'observable-helpers'
-import RouteImpl from 'modern-router/Route'
-
-const defaultRoute: Route = (new RouteImpl(): any)
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;
-    _observer: SubscriptionObserver<Route, Error>;
+    _observer: SubscriptionObserver<?Route, Error>;
 
     constructor(
         setLocation: (location: AbstractLocation) => void,
-        observer: SubscriptionObserver<Route, Error>
+        observer: SubscriptionObserver<?Route, Error>
     ) {
         this._setLocation = setLocation
         this._observer = observer
@@ -38,20 +36,27 @@ class LocationObserver {
     }
 }
 
+interface Params {
+    query: QueryMap,
+    name: string,
+    url: string,
+    isReplace: boolean,
+    isExternal: boolean
+}
+
 // implements RouterManager
 export default class DefaultRouterManager {
     _router: Router;
     _location: AbstractLocation;
-    _observable: Observable<Route, Error>;
-    _observer: SubscriptionObserver<Route, Error>;
+    _observable: Observable<?Route, Error>;
+    _observer: SubscriptionObserver<?Route, Error>;
     _subscription: Subscription;
 
-    route: Route;
+    route: ?Route;
 
     constructor(
         location: AbstractLocation,
-        router: Router,
-        observableLocation: Observable<AbstractLocation, Error>
+        router: Router
     ) {
         this._router = router
         this._location = location
@@ -59,7 +64,7 @@ export default class DefaultRouterManager {
         const broker = new ObserverBroker()
         this._observer = broker
         this._observable = broker.observable
-        this._subscription = observableLocation.subscribe(
+        this._subscription = Observable.from(location).subscribe(
             new LocationObserver(
                 (loc: AbstractLocation) => {
                     this._location = loc
@@ -76,14 +81,11 @@ export default class DefaultRouterManager {
         this._observer.complete()
     }
 
-    _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): {
-        query: QueryMap,
-        name: string,
-        url: string,
-        isReplace: boolean,
-        isExternal: boolean
-    } {
-        const route: Route = this._resolve()
+    _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
+        const route: ?Route = this._resolve()
+        if (!route) {
+            return null
+        }
         const name: string = pageName || route.page || ''
         const st: QueryMap = state || {}
         const query: QueryMap = replaceQuery
@@ -105,13 +107,12 @@ export default class DefaultRouterManager {
     }
 
     set(pageName: ?string, state?: QueryMap, replaceState: boolean = true): void {
-        const {
-            query,
-            name,
-            url,
-            isReplace,
-            isExternal
-        } = this._getParams(pageName, state, replaceState)
+        const params: ?Params = this._getParams(pageName, state, replaceState)
+        if (!params) {
+            throw new PageNotFoundError(pageName)
+        }
+
+        const {query, name, url, isReplace, isExternal} = params
 
         if (isReplace) {
             if (isExternal) {
@@ -130,8 +131,8 @@ export default class DefaultRouterManager {
         }
     }
 
-    _resolve(): Route {
-        return this._router.find(this._location.getParams(), this._observable) || defaultRoute
+    _resolve(): ?Route {
+        return this._router.find(this._location.getParams(), this._observable)
     }
 
     _next(): void {

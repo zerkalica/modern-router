@@ -3,12 +3,15 @@
 /* eslint-disable no-console */
 
 import http from 'http'
+
+import type {ServerResponse} from 'modern-router/i/fixes'
+import type {IncomingMessage} from 'http'
+
 import {
     RawHttpServerLocation,
-    createServerRouterManager
+    ServerRouterManagerFactory
 } from 'modern-router/server'
 import type {
-    ServerResponse,
     Route,
     RouterConfig,
     RouterManager
@@ -26,19 +29,18 @@ const config: RouterConfig = {
             page: 'MyPage2'
         }
     }
-};
+}
 
+const serverRouterManagerFactory = new ServerRouterManagerFactory(config)
 
-http.createServer((req: http$IncomingMessage, res: ServerResponse) => {
-    const routerManager: RouterManager = createServerRouterManager(
-        new RawHttpServerLocation((req: any), res),
-        config
-    );
-    const route: Route = routerManager.route
-    // console.log(route)
-    if (!route.page) {
-        res.writeHeader(404)
-        res.end(route.page ? '' : 'Page not found')
+http.createServer((req: IncomingMessage, res: ServerResponse) => {
+    const routerManager: RouterManager = serverRouterManagerFactory.create(
+        new RawHttpServerLocation((req: any), res)
+    )
+    const route: ?Route = routerManager.route
+    if (!route) {
+        res.writeHead(404)
+        res.end('Page not found')
     }
     res.end(JSON.stringify(route))
 }).listen(8080)

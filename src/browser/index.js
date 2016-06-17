@@ -1,7 +1,9 @@
 /* @flow */
 
-import createBrowserRouterManager from 'modern-router/browser/createBrowserRouterManager'
+import BrowserRouterManagerFactory from 'modern-router/browser/BrowserRouterManagerFactory'
+import BrowserLocation from 'modern-router/browser/BrowserLocation'
 
 export {
-    createBrowserRouterManager
+    BrowserLocation,
+    BrowserRouterManagerFactory
 }
