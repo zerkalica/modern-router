@@ -7,10 +7,9 @@ import http from 'http'
 import type {ServerResponse} from 'modern-router/i/fixes'
 import type {IncomingMessage} from 'http'
 
-import {
-    RawHttpServerLocation,
-    ServerRouterManagerFactory
-} from 'modern-router/server'
+import {RawHttpServerLocation} from 'modern-router/server'
+import {RouterManagerFactory} from 'modern-router'
+
 import type {
     Route,
     RouterConfig,
@@ -31,7 +30,7 @@ const config: RouterConfig = {
     }
 }
 
-const serverRouterManagerFactory = new ServerRouterManagerFactory(config)
+const serverRouterManagerFactory = new RouterManagerFactory(config)
 
 http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const routerManager: RouterManager = serverRouterManagerFactory.create(

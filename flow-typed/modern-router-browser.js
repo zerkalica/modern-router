@@ -15,11 +15,6 @@ declare module 'modern-router/browser' {
         history: History;
     }
 
-    declare class BrowserRouterManagerFactory {
-        constructor(config: RouterConfig): BrowserRouterManagerFactory;
-        create(location: AbstractLocation): RouterManager;
-    }
-
     declare class BrowserLocation mixins AbstractLocation {
         constructor(props: BrowserLocationProps): BrowserLocation;
     }

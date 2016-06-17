@@ -155,9 +155,9 @@ Client usage
 
 ```js
 // @flow
-import {
-    createBrowserRouterManager
-} from 'modern-router/browser'
+import {BrowserLocation} from 'modern-router/browser'
+import {RouterManagerFactory} from 'modern-router'
+
 import type {
     RouterConfig,
     RouterManager
@@ -203,7 +203,8 @@ const config: RouterConfig = {
     }
 };
 
-const rm: RouterManager = createBrowserRouterManager(window, config);
+const rm: RouterManager = (new RouterManagerFactory(config))
+    .create(new BrowserLocation(window))
 
 Observable.from(rm.route).subscribe({
     next(route: Route) {
@@ -265,17 +266,20 @@ Server usage
 /* eslint-disable no-console */
 
 import http from 'http'
-import {
-    RawHttpServerLocation,
-    createServerRouterManager
-} from 'modern-router/server'
+
+import type {ServerResponse} from 'modern-router/i/fixes'
+import type {IncomingMessage} from 'http'
+
+import {RawHttpServerLocation} from 'modern-router/server'
+import {RouterManagerFactory} from 'modern-router'
+
 import type {
     Route,
-    RouteConfig,
+    RouterConfig,
     RouterManager
 } from 'modern-router'
 
-const config: RouteConfig = {
+const config: RouterConfig = {
     routes: {
         'main.simple': {
             pattern: '/page1',
@@ -287,19 +291,18 @@ const config: RouteConfig = {
             page: 'MyPage2'
         }
     }
-};
+}
 
+const serverRouterManagerFactory = new RouterManagerFactory(config)
 
-http.createServer((req: http$IncomingMessage, res: http$ServerResponse) => {
-    const routerManager: RouterManager = createServerRouterManager(
-        new RawHttpServerLocation((req: any), res),
-        config
-    );
-    const route: Route = routerManager.route
-    // console.log(route)
-    if (!route.page) {
-        res.writeHeader(404)
-        res.end(route.page ? '' : 'Page not found')
+http.createServer((req: IncomingMessage, res: ServerResponse) => {
+    const routerManager: RouterManager = serverRouterManagerFactory.create(
+        new RawHttpServerLocation((req: any), res)
+    )
+    const route: ?Route = routerManager.route
+    if (!route) {
+        res.writeHead(404)
+        res.end('Page not found')
     }
     res.end(JSON.stringify(route))
 }).listen(8080)

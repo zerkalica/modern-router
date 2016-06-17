@@ -163,7 +163,7 @@ declare module 'modern-router' {
     declare type Renderer<Element, Widget> = (widget: Widget, error:? Error) => Element;
     declare type PageMap<Widget> = {[id: string]: Widget};
 
-    declare class AbstractLocation mixins $ObservableObject<AbstractLocation, Error> {
+    declare interface AbstractLocation {
         redirect(url: string): void;
         replace(url: string): void;
         getParams(): LocationData;
@@ -186,5 +186,14 @@ declare module 'modern-router' {
             pages: PageMap<Widget>,
             ErrorPage: Widget
         ): RouterObserver;
+    }
+
+    declare class RouterManagerFactory {
+        constructor(
+            config: RouterConfig,
+            getKey?: GetKey
+        ): RouterManagerFactory;
+
+        create(location: AbstractLocation): RouterManager;
     }
 }

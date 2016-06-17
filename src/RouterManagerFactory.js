@@ -1,4 +1,5 @@
 /* @flow */
+
 import SusaninRouter from 'modern-router/SusaninRouter'
 
 import type {
@@ -12,7 +13,7 @@ function defaultGetKey(params: LocationData): string {
     return `${params.protocol}-${params.hostname}-${params.port}`
 }
 
-export default class ServerRouterManagerFactory {
+export default class RouterManagerFactory {
     _getKey: GetKey;
     _cache: Map<string, Router> = new Map();
     _config: RouterConfig;
