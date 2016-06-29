@@ -2,7 +2,8 @@
 
 import type {
     RouterConfig,
-    RouterManager
+    RouterManager,
+    PageRec
 } from 'modern-router'
 
 import {
@@ -14,6 +15,12 @@ declare module 'modern-router/browser' {
         location: Location;
         history: History;
     }
+
+    declare function createBrowserRenderer<Widget, Component>(
+        rec: PageRec<Widget, Component>,
+        getter: (w: Widget) => Component,
+        h: (component: Component, props: {[id: string]: mixed}) => void
+    ): (page: ?string) => void
 
     declare class BrowserLocation mixins AbstractLocation {
         constructor(props: BrowserLocationProps): BrowserLocation;

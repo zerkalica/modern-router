@@ -17,6 +17,7 @@ interface BrowserLocationProps {
 export default class BrowserLocation {
     _location: Location;
     _history: History;
+
     constructor(win: BrowserLocationProps) {
         this._location = win.history.location || win.location
         this._history = win.history;

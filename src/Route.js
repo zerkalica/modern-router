@@ -6,17 +6,17 @@ import type {
 } from 'modern-router'
 
 export default class Route {
-    page: string;
+    page: ?string;
     query: QueryMap;
     data: RouteData;
 
     constructor(
-        page: string,
-        query: ?QueryMap,
+        page?: ?string,
+        query?: ?QueryMap,
         data?: RouteData,
         observable?: Observable<Route, Error>
     ) {
-        this.page = page
+        this.page = page || null
         this.query = query || {}
         this.data = data || {
             isExternal: false,

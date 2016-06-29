@@ -20,7 +20,7 @@ declare module 'modern-router' {
         isReplace?: boolean;
 
         /**
-         * Match route by hostname
+         * Match route by hostnamePageMap
          *
          * On server side, if one server on multiple hosts
          */
@@ -134,12 +134,12 @@ declare module 'modern-router' {
     }
 
     declare interface Route {
-        page: string;
+        page: ?string;
         query: QueryMap;
         data: RouteData;
 
         constructor(
-            page: string,
+            page: ?string,
             query: ?QueryMap,
             data?: RouteData,
             observable?: Observable<Route, Error>
@@ -147,12 +147,12 @@ declare module 'modern-router' {
     }
 
     declare interface Router {
-        find(options: LocationData): ?Route;
+        find(options: LocationData): Route;
         build(name: string, params?: QueryMap): string;
     }
 
     declare interface RouterManager {
-        route: ?Route;
+        route: Route;
         build(name: string, params?: QueryMap): string;
         set(pageName: ?string, state?: QueryMap): void;
         update(pageName: ?string, state?: QueryMap): void;
@@ -160,8 +160,15 @@ declare module 'modern-router' {
 
     declare type GetKey = (data: LocationData) => string;
 
-    declare type Renderer<Element, Widget> = (widget: Widget, error:? Error) => Element;
-    declare type PageMap<Widget> = {[id: string]: Widget};
+    declare type Renderer<Element, Widget> = (widget: Widget, error:? Error) => Element
+
+    declare type PageRec<Widget, Component> = {
+        ErrorPage: Widget;
+        FallbackPage: Component;
+        pages: {
+            [id: string]: Widget;
+        }
+    }
 
     declare interface AbstractLocation {
         redirect(url: string): void;
@@ -178,14 +185,6 @@ declare module 'modern-router' {
             pageName?: ?string,
             message?: string
         ): PageNotFoundError;
-    }
-
-    declare class RouterObserver<Element, Widget> extends SubscriptionObserver<Route, Error> {
-        constructor(
-            renderer: Renderer<Element, Widget>,
-            pages: PageMap<Widget>,
-            ErrorPage: Widget
-        ): RouterObserver;
     }
 
     declare class RouterManagerFactory {

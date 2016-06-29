@@ -13,11 +13,11 @@ import {ObserverBroker} from 'observable-helpers'
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;
-    _observer: SubscriptionObserver<?Route, Error>;
+    _observer: SubscriptionObserver<Route, Error>;
 
     constructor(
         setLocation: (location: AbstractLocation) => void,
-        observer: SubscriptionObserver<?Route, Error>
+        observer: SubscriptionObserver<Route, Error>
     ) {
         this._setLocation = setLocation
         this._observer = observer
@@ -48,11 +48,11 @@ interface Params {
 export default class DefaultRouterManager {
     _router: Router;
     _location: AbstractLocation;
-    _observable: Observable<?Route, Error>;
-    _observer: SubscriptionObserver<?Route, Error>;
+    _observable: Observable<Route, Error>;
+    _observer: SubscriptionObserver<Route, Error>;
     _subscription: Subscription;
 
-    route: ?Route;
+    route: Route;
 
     constructor(
         location: AbstractLocation,
@@ -82,7 +82,7 @@ export default class DefaultRouterManager {
     }
 
     _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
-        const route: ?Route = this._resolve()
+        const route: Route = this._resolve()
         if (!route) {
             return null
         }
@@ -131,7 +131,7 @@ export default class DefaultRouterManager {
         }
     }
 
-    _resolve(): ?Route {
+    _resolve(): Route {
         return this._router.find(this._location.getParams(), this._observable)
     }
 

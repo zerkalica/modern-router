@@ -4,6 +4,7 @@ import Err from 'es6-error'
 
 export default class PageNotFoundError extends Err {
     pageName: ?string;
+    statusCode: number = 404;
 
     constructor(
         pageName?: ?string,
