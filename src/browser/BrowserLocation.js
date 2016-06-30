@@ -2,7 +2,7 @@
 
 import type {
     LocationData,
-    AbstractLocation // eslint-disable-line
+    AbstractLocation
 } from 'modern-router/interfaces'
 
 import {observableFromEvent} from 'observable-helpers/browser'
@@ -13,7 +13,6 @@ export interface BrowserLocationProps {
     history: History;
 }
 
-// implements AbstractLocation
 export default class BrowserLocation {
     _location: Location;
     _history: History;
@@ -54,3 +53,4 @@ export default class BrowserLocation {
         }
     }
 }
+if (0) (new BrowserLocation(...(0: any)): AbstractLocation) // eslint-disable-line
