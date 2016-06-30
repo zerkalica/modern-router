@@ -1,9 +1,10 @@
 /* @flow */
 
 import type {
+    IRoute,
     QueryMap,
     RouteData
-} from 'modern-router'
+} from 'modern-router/interfaces'
 
 export default class Route {
     page: ?string;
@@ -27,3 +28,4 @@ export default class Route {
         }
     }
 }
+if (0) (new Route(...(0: any)): IRoute) // eslint-disable-line

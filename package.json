@@ -2,10 +2,6 @@
   "name": "modern-router",
   "version": "0.2.2",
   "description": "Modern observable-based router",
-  "publishConfig": {
-    "registry": "https://registry.npmjs.org"
-  },
-  "main": "dist/index.js",
   "config": {
     "builddir": "."
   },
@@ -42,19 +38,20 @@
   "files": [
     "*.map",
     "*.js",
+    "*.flow",
     ".flowconfig",
     "README.md",
     "LICENSE",
-    "i",
+    "src",
     "dist",
     "flow-typed"
   ],
   "devDependencies": {
-    "babel-cli": "^6.9.0",
-    "babel-core": "^6.9.1",
-    "babel-plugin-espower": "^2.2.0",
+    "babel-cli": "^6.10.1",
+    "babel-core": "^6.10.4",
+    "babel-plugin-espower": "^2.3.1",
     "babel-plugin-flow-comments": "^6.3.19",
-    "babel-plugin-module-alias": "^1.4.0",
+    "babel-plugin-module-alias": "^1.5.0",
     "babel-plugin-syntax-decorators": "^6.8.0",
     "babel-plugin-syntax-flow": "^6.8.0",
     "babel-plugin-transform-flow-strip-types": "^6.8.0",
@@ -62,14 +59,14 @@
     "babel-preset-es2015-loose": "^7.0.0",
     "babel-preset-stage-0": "^6.5.0",
     "eslint-config-airplus": "^1.1.9",
-    "glob": "^7.0.3",
+    "glob": "^7.0.5",
     "mocha": "^2.5.3",
     "power-assert": "^1.4.1",
     "sinon": "^1.17.4"
   },
   "dependencies": {
     "es6-error": "^3.0.0",
-    "observable-helpers": "0.0.8",
+    "observable-helpers": "0.0.14",
     "susanin": "^1.0.1"
   }
 }

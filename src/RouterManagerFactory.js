@@ -1,11 +1,13 @@
 /* @flow */
 
-import SusaninRouter from 'modern-router/SusaninRouter'
-
 import type {
+    GetKey,
+    AbstractLocation,
+    RouterManager,
+    CreateRouter,
     LocationData,
     Router
-} from 'modern-router'
+} from 'modern-router/interfaces'
 
 import DefaultRouterManager from 'modern-router/DefaultRouterManager'
 
@@ -16,14 +18,14 @@ function defaultGetKey(params: LocationData): string {
 export default class RouterManagerFactory {
     _getKey: GetKey;
     _cache: Map<string, Router> = new Map();
-    _config: RouterConfig;
+    _createRouter: CreateRouter;
 
     constructor(
-        config: RouterConfig,
+        createRouter: CreateRouter,
         getKey?: GetKey = defaultGetKey
     ) {
-        this._config = config
         this._getKey = getKey
+        this._createRouter = createRouter
     }
 
     create(location: AbstractLocation): RouterManager {
@@ -32,7 +34,7 @@ export default class RouterManagerFactory {
         const routerCache: Map<string, Router> = this._cache
         let router: ?Router = routerCache.get(key)
         if (!router) {
-            router = new SusaninRouter(this._config, params)
+            router = this._createRouter(params)
             routerCache.set(key, router)
         }
 

@@ -4,19 +4,24 @@
 
 import http from 'http'
 
-import type {ServerResponse} from 'modern-router/i/fixes'
+import type {ServerResponse} from 'modern-router/server'
 import type {IncomingMessage} from 'http'
 
 import {RawHttpServerLocation} from 'modern-router/server'
-import {RouterManagerFactory} from 'modern-router'
 
 import type {
-    Route,
-    RouterConfig,
+    LocationData,
+    IRoute,
     RouterManager
-} from 'modern-router'
+} from 'modern-router/index'
 
-const config: RouterConfig = {
+import {
+    SusaninRouter,
+    RouterManagerFactory,
+    RouterConfig
+} from 'modern-router/index'
+
+const config: RouterConfig = new RouterConfig({
     routes: {
         'main.simple': {
             pattern: '/page1',
@@ -28,15 +33,17 @@ const config: RouterConfig = {
             page: 'MyPage2'
         }
     }
-}
+})
 
-const serverRouterManagerFactory = new RouterManagerFactory(config)
+const serverRouterManagerFactory = new RouterManagerFactory(
+    (params: LocationData) => new SusaninRouter(config, params)
+)
 
 http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const routerManager: RouterManager = serverRouterManagerFactory.create(
         new RawHttpServerLocation((req: any), res)
     )
-    const route: ?Route = routerManager.route
+    const route: ?IRoute = routerManager.route
     if (!route) {
         res.writeHead(404)
         res.end('Page not found')

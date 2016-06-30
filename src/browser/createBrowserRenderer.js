@@ -2,7 +2,7 @@
 
 import type {
     PageRec
-} from 'modern-router'
+} from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 

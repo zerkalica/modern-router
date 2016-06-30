@@ -3,12 +3,12 @@
 import type {
     LocationData,
     AbstractLocation // eslint-disable-line
-} from 'modern-router'
+} from 'modern-router/interfaces'
 
 import {observableFromEvent} from 'observable-helpers/browser'
 import {mapObservable} from 'observable-helpers'
 
-interface BrowserLocationProps {
+export interface BrowserLocationProps {
     location: Location;
     history: History;
 }

@@ -2,10 +2,10 @@
 
 import type {
     LocationData,
-    AbstractLocation // eslint-disable-line
-} from 'modern-router'
+    AbstractLocation
+} from 'modern-router/interfaces'
 
-import type {ServerResponse} from 'modern-router/i/fixes'
+import type {ServerResponse} from 'modern-router/server/fixes'
 
 import {parse} from 'url'
 
@@ -18,7 +18,6 @@ interface Req {
 
 function noop() {}
 
-// implements AbstractLocation
 export default class RawHttpServerLocation {
     _req: Req;
     _res: ServerResponse;
@@ -114,3 +113,4 @@ export default class RawHttpServerLocation {
         return result
     }
 }
+if (0) (new RawHttpServerLocation(...(0: any)): AbstractLocation) // eslint-disable-line

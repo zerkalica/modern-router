@@ -3,18 +3,19 @@ modern-router
 
 Simple separation concerns client/server router, based on [susanin](https://github.com/nodules/susanin).
 
-Features
---------
+Need Observable polyfill, use [zen-observable](https://github.com/zenparsing/zen-observable) or [core-js](https://github.com/zloirock/core-js).
 
--	Config-based, can be configured from json
--	Reversable: can build url string from route name and parameters
--	Can inherit previous route state: rm.set('page', {id: '1'}); rm.update(null, {id: '2'})
--	Can handle routes to external resources
--	Isomorphic: can be used on client or server side
--	[susanin](https://github.com/nodules/susanin) used as pattern matching engine
--	Needs Observable polyfill for location changes
--	Used [flowtype](http://flowtype.org) definitions
--	Can be used in old ie browsers with [HTML5-History-API](https://github.com/devote/HTML5-History-API) polyfill
+## Why not ... router
+
+1. Router should't be depended on buzzname-framework, like [react-router-redux](https://github.com/reactjs/react-router-redux), [react-router](https://github.com/reactjs/react-router), [express](https://github.com/expressjs/express)
+2. Should be isolated from server/client realization via custom adapters
+3. Pattern-matching engine should be separated from router core
+4. Rules should be separated from code: they can't accept callbacks in configuration, only serializable json
+5. Same rules for server and client
+6. Rules should be matched by url, method, hostname, port, protocol, accept header
+7. Router should be reversable (build url string from route name and parameters)
+8. Router can build urls to external resources
+9. Router should handle redirects to external resources, pushState on client side
 
 Interfaces
 ----------
@@ -24,7 +25,6 @@ interface RouterManager {
 
     /**
      * Parsed observable route
-     * @type {[type]}
      */
     route: Route;
 
@@ -156,14 +156,17 @@ Client usage
 ```js
 // @flow
 import {BrowserLocation} from 'modern-router/browser'
-import {RouterManagerFactory} from 'modern-router'
-
-import type {
+import {
     RouterConfig,
+    RouterManagerFactory,
+    SusaninRouter
+} from 'modern-router'
+import type {
+    LocationData,
     RouterManager
 } from 'modern-router'
 
-const config: RouterConfig = {
+const config = new RouterConfig({
     // generate full url by default
     isFull: false,
     routes: {
@@ -201,9 +204,9 @@ const config: RouterConfig = {
             }
         }
     }
-};
+})
 
-const rm: RouterManager = (new RouterManagerFactory(config))
+const rm: RouterManager = (new RouterManagerFactory((params: LocationData) => new SusaninRouter(config, params)))
     .create(new BrowserLocation(window))
 
 Observable.from(rm.route).subscribe({
@@ -271,15 +274,20 @@ import type {ServerResponse} from 'modern-router/i/fixes'
 import type {IncomingMessage} from 'http'
 
 import {RawHttpServerLocation} from 'modern-router/server'
-import {RouterManagerFactory} from 'modern-router'
 
 import type {
-    Route,
-    RouterConfig,
+    LocationData,
+    IRoute,
     RouterManager
 } from 'modern-router'
 
-const config: RouterConfig = {
+import {
+    SusaninRouter,
+    RouterManagerFactory,
+    RouterConfig
+} from 'modern-router'
+
+const config: RouterConfig = new RouterConfig({
     routes: {
         'main.simple': {
             pattern: '/page1',
@@ -291,15 +299,17 @@ const config: RouterConfig = {
             page: 'MyPage2'
         }
     }
-}
+})
 
-const serverRouterManagerFactory = new RouterManagerFactory(config)
+const serverRouterManagerFactory = new RouterManagerFactory(
+    (params: LocationData) => new SusaninRouter(config, params)
+)
 
 http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const routerManager: RouterManager = serverRouterManagerFactory.create(
         new RawHttpServerLocation((req: any), res)
     )
-    const route: ?Route = routerManager.route
+    const route: ?IRoute = routerManager.route
     if (!route) {
         res.writeHead(404)
         res.end('Page not found')

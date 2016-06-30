@@ -1,23 +1,23 @@
 /* @flow */
 import type {
-    Route,
+    IRoute,
     QueryMap,
     Router,
     RouteData,
     AbstractLocation,
-    RouterManager // eslint-disable-line
-} from 'modern-router'
+    RouterManager
+} from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 import {ObserverBroker} from 'observable-helpers'
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;
-    _observer: SubscriptionObserver<Route, Error>;
+    _observer: SubscriptionObserver<IRoute, Error>;
 
     constructor(
         setLocation: (location: AbstractLocation) => void,
-        observer: SubscriptionObserver<Route, Error>
+        observer: SubscriptionObserver<IRoute, Error>
     ) {
         this._setLocation = setLocation
         this._observer = observer
@@ -35,6 +35,7 @@ class LocationObserver {
         this._observer.error(err)
     }
 }
+if (0) (new LocationObserver(...(0: any)): Observer<AbstractLocation, Error>) // eslint-disable-line
 
 interface Params {
     query: QueryMap,
@@ -48,11 +49,11 @@ interface Params {
 export default class DefaultRouterManager {
     _router: Router;
     _location: AbstractLocation;
-    _observable: Observable<Route, Error>;
-    _observer: SubscriptionObserver<Route, Error>;
+    _observable: Observable<IRoute, Error>;
+    _observer: SubscriptionObserver<IRoute, Error>;
     _subscription: Subscription;
 
-    route: Route;
+    route: IRoute;
 
     constructor(
         location: AbstractLocation,
@@ -82,7 +83,7 @@ export default class DefaultRouterManager {
     }
 
     _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
-        const route: Route = this._resolve()
+        const route: IRoute = this._resolve()
         if (!route) {
             return null
         }
@@ -131,7 +132,7 @@ export default class DefaultRouterManager {
         }
     }
 
-    _resolve(): Route {
+    _resolve(): IRoute {
         return this._router.find(this._location.getParams(), this._observable)
     }
 
@@ -148,3 +149,5 @@ export default class DefaultRouterManager {
         return this._router.build(name, params)
     }
 }
+
+if (0) (new DefaultRouterManager(...(0: any)): RouterManager) // eslint-disable-line

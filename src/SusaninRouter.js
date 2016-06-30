@@ -3,15 +3,17 @@
 import Susanin from 'susanin'
 
 import type {
+    Router,
+    IRoute,
     QueryMap,
     RouteData,
     LocationDataBase,
     LocationData,
     RouteConfigData,
-    RouteConfig,
-    RouterConfig
-} from 'modern-router'
+    RouteConfig
+} from 'modern-router/interfaces'
 
+import RouterConfig from 'modern-router/RouterConfig'
 import Route from 'modern-router/Route'
 
 type LocationParams = {
@@ -85,9 +87,9 @@ export default class SusaninRouter {
             port: cd.port || dl.port,
             protocol: cd.protocol || dl.protocol,
             method: cd.method || dl.method
-        };
+        }
 
-        const isExternal: boolean = !!(cd.port || cd.hostname || cd.protocol);
+        const isExternal: boolean = !!(cd.port || cd.hostname || cd.protocol)
 
         const data: RouteSusaninData = {
             page: config.page || name,
@@ -103,7 +105,7 @@ export default class SusaninRouter {
                     ? this._defaultIsFull
                     : cd.isFull
              )
-        };
+        }
 
         this._susanin.addRoute({
             name,
@@ -125,8 +127,8 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationData, observable?: Observable<Route, Error>): Route {
-        const params: LocationParams = routerLocationToParams(options);
+    find(options: LocationData, observable?: Observable<Route, Error>): IRoute {
+        const params: LocationParams = routerLocationToParams(options)
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
@@ -137,3 +139,5 @@ export default class SusaninRouter {
         return new Route()
     }
 }
+
+if (0) (new SusaninRouter(...(0: any)): Router) // eslint-disable-line
