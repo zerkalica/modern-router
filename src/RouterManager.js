@@ -5,7 +5,7 @@ import type {
     Router,
     RouteData,
     AbstractLocation,
-    RouterManager
+    IRouterManager
 } from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
@@ -45,8 +45,7 @@ interface Params {
     isExternal: boolean
 }
 
-// implements RouterManager
-export default class DefaultRouterManager {
+export default class RouterManager {
     _router: Router;
     _location: AbstractLocation;
     _observable: Observable<IRoute, Error>;
@@ -150,4 +149,4 @@ export default class DefaultRouterManager {
     }
 }
 
-if (0) (new DefaultRouterManager(...(0: any)): RouterManager) // eslint-disable-line
+if (0) (new RouterManager(...(0: any)): IRouterManager) // eslint-disable-line

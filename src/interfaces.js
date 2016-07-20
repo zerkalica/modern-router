@@ -147,7 +147,7 @@ export interface Router {
 export type CreateRouter = (params: LocationData) => Router
 export type GetKey = (params: LocationData) => string
 
-export interface RouterManager {
+export interface IRouterManager {
     /**
      * Parsed observable route
      */

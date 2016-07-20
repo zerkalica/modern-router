@@ -3,16 +3,15 @@
 import type {
     GetKey,
     AbstractLocation,
-    RouterManager,
     CreateRouter,
     LocationData,
     Router
 } from 'modern-router/interfaces'
 
-import DefaultRouterManager from 'modern-router/DefaultRouterManager'
+import RouterManager from 'modern-router/RouterManager'
 
 function defaultGetKey(params: LocationData): string {
-    return `${params.protocol}-${params.hostname}-${params.port}`
+    return `${params.protocol}-${params.hostname}-${params.port || ''}`
 }
 
 export default class RouterManagerFactory {
@@ -38,7 +37,7 @@ export default class RouterManagerFactory {
             routerCache.set(key, router)
         }
 
-        return new DefaultRouterManager(
+        return new RouterManager(
             location,
             router
         )
