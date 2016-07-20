@@ -4,12 +4,12 @@ import type {
     QueryMap,
     Router,
     RouteData,
-    AbstractLocation,
     IRouterManager
 } from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 import {ObserverBroker} from 'observable-helpers'
+import AbstractLocation from 'modern-router/AbstractLocation'
 
 class LocationObserver {
     _setLocation: (location: AbstractLocation) => void;

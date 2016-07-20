@@ -179,12 +179,3 @@ export interface PageRec<Widget, Component> {
         [id: string]: Widget;
     }
 }
-
-
-export interface AbstractLocation {
-    redirect(url: string): void;
-    replace(url: string): void;
-    getParams(): LocationData;
-    pushState(query: QueryMap, name: string, url: string): void;
-    replaceState(query: QueryMap, name: string, url: string): void;
-}

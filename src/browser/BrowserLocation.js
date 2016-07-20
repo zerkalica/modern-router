@@ -1,10 +1,10 @@
 /* @flow */
 
 import type {
-    LocationData,
-    AbstractLocation
+    LocationData
 } from 'modern-router/interfaces'
 
+import AbstractLocation from 'modern-router/AbstractLocation'
 import {observableFromEvent} from 'observable-helpers/browser'
 import {mapObservable} from 'observable-helpers'
 
@@ -13,11 +13,12 @@ export interface BrowserLocationProps {
     history: History;
 }
 
-export default class BrowserLocation {
+export default class BrowserLocation extends AbstractLocation {
     _location: Location;
     _history: History;
 
     constructor(win: BrowserLocationProps) {
+        super()
         this._location = win.history.location || win.location
         this._history = win.history;
         (this: Object)[Symbol.observable] = () =>
@@ -53,4 +54,3 @@ export default class BrowserLocation {
         }
     }
 }
-if (0) (new BrowserLocation(...(0: any)): AbstractLocation) // eslint-disable-line

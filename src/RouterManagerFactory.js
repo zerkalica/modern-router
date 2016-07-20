@@ -2,13 +2,13 @@
 
 import type {
     GetKey,
-    AbstractLocation,
     CreateRouter,
     LocationData,
     Router
 } from 'modern-router/interfaces'
 
 import RouterManager from 'modern-router/RouterManager'
+import AbstractLocation from 'modern-router/AbstractLocation'
 
 function defaultGetKey(params: LocationData): string {
     return `${params.protocol}-${params.hostname}-${params.port || ''}`

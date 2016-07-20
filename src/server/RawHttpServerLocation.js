@@ -1,11 +1,11 @@
 /* @flow */
 
 import type {
-    LocationData,
-    AbstractLocation
+    LocationData
 } from 'modern-router/interfaces'
 
 import type {ServerResponse} from 'modern-router/server/fixes'
+import AbstractLocation from 'modern-router/AbstractLocation'
 
 import {parse} from 'url'
 
@@ -18,7 +18,7 @@ interface Req {
 
 function noop() {}
 
-export default class RawHttpServerLocation {
+export default class RawHttpServerLocation extends AbstractLocation {
     _req: Req;
     _res: ServerResponse;
 
@@ -31,6 +31,7 @@ export default class RawHttpServerLocation {
         isHttps?: boolean = false,
         isTrustedProxy?: boolean = true
     ) {
+        super()
         this._req = req
         this._res = res
         this._protocol = isHttps ? 'https' : 'http'
