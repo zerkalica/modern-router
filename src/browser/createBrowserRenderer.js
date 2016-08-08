@@ -13,13 +13,19 @@ export default function createBrowserRenderer<Widget, Component>(
 ): (page: ?string) => void {
     return function browserRenderer(pageId: ?string): void {
         const page: ?Widget = pageId ? rec.pages[pageId] : null
-        let error: ?Error = page ? null : new PageNotFoundError(pageId)
-        let component: ?Component = null
         try {
-            component = getter(page || rec.ErrorPage)
-        } catch (err) {
-            error = err
+            if (!page) {
+                throw new PageNotFoundError(pageId)
+            }
+            h(getter(page), {})
+        } catch (error) {
+            try {
+                h(getter(rec.ErrorPage), {error})
+            } catch (subErr) {
+                subErr.parent = error
+                h(rec.FallbackPage, {error: subErr})
+            }
+            throw error
         }
-        h(component || rec.FallbackPage, {error})
     }
 }
