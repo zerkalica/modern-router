@@ -22,6 +22,11 @@ const config = {
             isFull: true,
             pattern: '/page2',
             page: 'MyPage2'
+        },
+        'json.example1': {
+            pattern: '/json-page',
+            page: 'JsonPage',
+            format: 'json'
         }
     }
 }
@@ -38,6 +43,7 @@ http.createServer((req: IncomingMessage, res: ServerResponse) => {
             res.end(`
                 <a href="/page1">main.simple</a>
                 <a href="/page2">main.simple2</a>
+                <a href="/json-page">json.example1</a>
             `)
         }
         res.end(JSON.stringify(route))

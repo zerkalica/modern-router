@@ -1,7 +1,8 @@
 /* @flow */
 
 import type {
-    LocationData
+    LocationData,
+    ContentFormat
 } from 'modern-router/interfaces'
 
 import type {ServerResponse} from 'http'
@@ -15,6 +16,22 @@ interface Req {
     method: string;
     url: string;
     headers: Object;
+}
+
+const isHtml = new RegExp('/html')
+const isJson = new RegExp('/json')
+
+function formatFromContentType(contentType?: string): ContentFormat {
+    if (!contentType) {
+        return 'html'
+    }
+    if (isHtml.test(contentType)) {
+        return 'html'
+    }
+    if (isJson.test(contentType)) {
+        return 'json'
+    }
+    return 'html'
 }
 
 export default class RawHttpServerLocation extends AbstractLocation {
@@ -146,6 +163,7 @@ export default class RawHttpServerLocation extends AbstractLocation {
             hostname,
             port,
             protocol,
+            format: formatFromContentType(req.headers['content-type']),
             method: req.method
         }
 

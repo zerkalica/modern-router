@@ -2,6 +2,8 @@
 
 export type SimpleMap<V, K> = {[id: V]: K};
 
+export type ContentFormat = 'html' | 'json'
+
 export interface RouteConfig {
     /**
      * Route pattern
@@ -50,40 +52,45 @@ export interface RouteConfig {
      /**
       * Generate full url or not, overrides isFull in RouterConfig
       */
-     isFull?: boolean;
+    isFull?: boolean;
 
      /**
       * On client do location.replaceState or location.pushState
       */
-     isReplace?: boolean;
+    isReplace?: boolean;
 
      /**
       * Match route by hostnamePageMap
       *
       * On server side, if one server on multiple hosts
       */
-     hostname?: string;
+    hostname?: string;
 
      /**
       * Match route by port
       *
       * On server side, if one configuration on multiple servers
       */
-     port?: string;
+    port?: string;
 
      /**
       * Match route by protocol
       *
       * On server side, if one configuration on multiple servers
       */
-     protocol?: string;
+    protocol?: string;
 
      /**
       * Match route by http method
       *
       * On server side
       */
-     method?: string;
+    method?: string;
+
+    /**
+     * Match route by content-type header
+     */
+    format?: ContentFormat;
 }
 
 export interface IRouterConfig {
@@ -105,6 +112,7 @@ export interface LocationDataBase {
     port: ?string;
     protocol: string;
     method: string;
+    format: ContentFormat;
 }
 
 export interface LocationData extends LocationDataBase {

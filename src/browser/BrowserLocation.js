@@ -48,6 +48,7 @@ export default class BrowserLocation extends AbstractLocation {
             hostname: location.hostname,
             port: location.port,
             protocol: location.protocol,
+            format: 'html',
             method: 'GET'
         }
     }

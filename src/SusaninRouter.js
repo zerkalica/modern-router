@@ -3,6 +3,7 @@
 import Susanin from 'susanin'
 
 import type {
+    ContentFormat,
     IRouterConfig,
     Router,
     IRoute,
@@ -24,6 +25,7 @@ function routerLocationToParams(location: LocationData): LocationParams {
     return {
         path: location.pathname + location.search,
         params: {
+            format: location.format,
             hostname: location.hostname,
             port: location.port,
             protocol: location.protocol,
@@ -58,6 +60,7 @@ export interface DefaultLocation {
     port: ?string;
     protocol: string;
     method: string;
+    format: ContentFormat;
 }
 
 // implements Router
@@ -78,6 +81,7 @@ export default class SusaninRouter {
         this._susanin = new Susanin()
         const keys = Object.keys(routes)
         this._defaultLocation = {
+            format: defaultLocation.format,
             hostname: defaultLocation.hostname,
             port: defaultLocation.port,
             protocol: defaultLocation.protocol,
@@ -91,6 +95,7 @@ export default class SusaninRouter {
     _addRoute(name: string, config: RouteConfig): void {
         const dl = this._defaultLocation
         const rd: LocationDataBase = {
+            format: config.format || dl.format,
             hostname: config.hostname || dl.hostname,
             port: config.port || dl.port,
             protocol: config.protocol || dl.protocol,
@@ -102,6 +107,7 @@ export default class SusaninRouter {
         const data: RouteSusaninData = {
             page: config.page || name,
             origin: getOrigin(rd),
+            format: rd.format,
             hostname: rd.hostname,
             port: rd.port,
             protocol: rd.protocol,
@@ -140,7 +146,7 @@ export default class SusaninRouter {
             throw new Error(`Route not found: ${name}`)
         }
 
-        const data: RouteSusaninData = route.getData();
+        const data: RouteSusaninData = route.getData()
 
         return (data.isFull ? data.origin : '') + route.build(params)
     }
