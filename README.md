@@ -3,8 +3,6 @@ modern-router
 
 Simple separation concerns client/server router, based on [susanin](https://github.com/nodules/susanin).
 
-Need Observable polyfill, use [zen-observable](https://github.com/zenparsing/zen-observable) or [core-js](https://github.com/zloirock/core-js).
-
 ## Why not ... router
 
 1. Router should't be depended on buzzname-framework, like [react-router-redux](https://github.com/reactjs/react-router-redux), [react-router](https://github.com/reactjs/react-router), [express](https://github.com/expressjs/express)
@@ -265,40 +263,40 @@ export interface RouteConfig {
      /**
       * Generate full url or not, overrides isFull in RouterConfig
       */
-     isFull?: boolean;
+    isFull?: boolean;
 
      /**
       * On client do location.replaceState or location.pushState
       */
-     isReplace?: boolean;
+    isReplace?: boolean;
 
      /**
       * Match route by hostnamePageMap
       *
       * On server side, if one server on multiple hosts
       */
-     hostname?: string;
+    hostname?: string;
 
      /**
       * Match route by port
       *
       * On server side, if one configuration on multiple servers
       */
-     port?: string;
+    port?: string;
 
      /**
       * Match route by protocol
       *
       * On server side, if one configuration on multiple servers
       */
-     protocol?: string;
+    protocol?: string;
 
      /**
       * Match route by http method
       *
       * On server side
       */
-     method?: string;
+    method?: string;
 }
 
 export interface IRouterConfig {

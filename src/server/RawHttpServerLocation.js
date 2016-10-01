@@ -54,7 +54,6 @@ export default class RawHttpServerLocation extends AbstractLocation {
 
     replace(url: string): void {
         this.redirect(url)
-        this._next()
     }
 
     redirect(url: string): void {
@@ -62,11 +61,31 @@ export default class RawHttpServerLocation extends AbstractLocation {
             Location: url
         })
         this._res.end()
-        this._next()
     }
 
-    postRedirect(): void {
-        throw new Error('Not implemented')
+    redirectPost(url: string, params?: {
+        [id: string]: string
+    } = {}): void {
+        const p = params || {}
+        this._res.end(
+            `<!DOCTYPE html>
+            <html>
+                <head>
+                    <meta charset="UTF-8">
+                    <title>redirect</title>
+                </head>
+                <body>
+                    <form id="modern-router-redirect" method="post" action="${url}">
+                        ${Object.keys(p).map((key: string) =>
+                            `<input name="${key}" type="hidden" value=${p[key]}>`
+                        ).join('\n')}
+                    </form>
+                    <script>
+                        document.getElementById('modern-router-redirect').submit()
+                    </script>
+                </body>
+            </html>`
+        )
     }
 
     pushState(query: Object, name: string, url: string): void {

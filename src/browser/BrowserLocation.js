@@ -87,7 +87,6 @@ export default class BrowserLocation extends AbstractLocation {
         for (let i = 0; i < keys.length; i++) {
             const name = keys[i]
             const inputNode = d.createElement('input')
-            inputNode.setAttribute('key', name)
             inputNode.setAttribute('type', 'hidden')
             inputNode.setAttribute('name', name)
             inputNode.setAttribute('value', params[name])
