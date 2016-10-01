@@ -4,24 +4,15 @@
 
 import http from 'http'
 
-import type {ServerResponse} from 'modern-router/server'
-import type {IncomingMessage} from 'http'
+import type {IncomingMessage, ServerResponse} from 'http'
 
 import {RawHttpServerLocation} from 'modern-router/server'
 
-import type {
-    LocationData,
-    IRoute,
-    RouterManager
-} from 'modern-router/index'
+import type {RouterManager} from 'modern-router/index'
 
-import {
-    SusaninRouter,
-    RouterManagerFactory,
-    RouterConfig
-} from 'modern-router/index'
+import {createRouterFactory} from 'modern-router/index'
 
-const config: RouterConfig = new RouterConfig({
+const config = {
     routes: {
         'main.simple': {
             pattern: '/page1',
@@ -33,22 +24,25 @@ const config: RouterConfig = new RouterConfig({
             page: 'MyPage2'
         }
     }
-})
+}
 
-const serverRouterManagerFactory = new RouterManagerFactory(
-    (params: LocationData) => new SusaninRouter(config, params)
-)
+const rf = createRouterFactory(config)
 
 http.createServer((req: IncomingMessage, res: ServerResponse) => {
-    const routerManager: RouterManager = serverRouterManagerFactory.create(
+    const routerManager: RouterManager = rf(
         new RawHttpServerLocation((req: any), res)
     )
-    const route: ?IRoute = routerManager.route
-    if (!route) {
-        res.writeHead(404)
-        res.end('Page not found')
-    }
-    res.end(JSON.stringify(route))
+    routerManager.onChange((route) => {
+        if (!route.page) {
+            res.writeHead(404)
+            res.end(`
+                <a href="/page1">main.simple</a>
+                <a href="/page2">main.simple2</a>
+            `)
+        }
+        res.end(JSON.stringify(route))
+        routerManager.dispose()
+    })
 }).listen(8080)
 
 console.log('Server started at https://localhost:8080/')

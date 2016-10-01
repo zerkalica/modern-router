@@ -2,49 +2,6 @@
 
 export type SimpleMap<V, K> = {[id: V]: K};
 
-/**
- * Page matching parameters
- */
-export interface RouteConfigData {
-    /**
-     * Generate full url or not, overrides isFull in RouterConfig
-     */
-    isFull?: boolean;
-
-    /**
-     * On client do location.replaceState or location.pushState
-     */
-    isReplace?: boolean;
-
-    /**
-     * Match route by hostnamePageMap
-     *
-     * On server side, if one server on multiple hosts
-     */
-    hostname?: string;
-
-    /**
-     * Match route by port
-     *
-     * On server side, if one configuration on multiple servers
-     */
-    port?: string;
-
-    /**
-     * Match route by protocol
-     *
-     * On server side, if one configuration on multiple servers
-     */
-    protocol?: string;
-
-    /**
-     * Match route by http method
-     *
-     * On server side
-     */
-    method?: string;
-}
-
 export interface RouteConfig {
     /**
      * Route pattern
@@ -79,7 +36,7 @@ export interface RouteConfig {
      * }
      * ```
      */
-    conditions?: SimpleMap<string, string|string[]>;
+    conditions?: SimpleMap<string, string | string[]>;
 
     /**
      * Internal page id
@@ -89,10 +46,47 @@ export interface RouteConfig {
     /**
      * Page matching parameters
      */
-    data?: RouteConfigData;
+
+     /**
+      * Generate full url or not, overrides isFull in RouterConfig
+      */
+     isFull?: boolean;
+
+     /**
+      * On client do location.replaceState or location.pushState
+      */
+     isReplace?: boolean;
+
+     /**
+      * Match route by hostnamePageMap
+      *
+      * On server side, if one server on multiple hosts
+      */
+     hostname?: string;
+
+     /**
+      * Match route by port
+      *
+      * On server side, if one configuration on multiple servers
+      */
+     port?: string;
+
+     /**
+      * Match route by protocol
+      *
+      * On server side, if one configuration on multiple servers
+      */
+     protocol?: string;
+
+     /**
+      * Match route by http method
+      *
+      * On server side
+      */
+     method?: string;
 }
 
-export interface RouteConfigProps {
+export interface IRouterConfig {
     /**
      * Generate full url by default ?
      */
@@ -101,11 +95,10 @@ export interface RouteConfigProps {
     /**
      * Route map
      */
-    routes?: SimpleMap<string, RouteConfig>;
+    routes: SimpleMap<string, RouteConfig>;
 }
 
-
-export type QueryMap = SimpleMap<string, string|string[]>;
+export type QueryMap = {[id: string]: (string | string[])}
 
 export interface LocationDataBase {
     hostname: string;
@@ -142,17 +135,13 @@ export interface IRoute {
 export interface Router {
     find(options: LocationData): IRoute;
     build(name: string, params?: QueryMap): string;
+    getRouteByName(name: string): ?IRoute;
 }
 
 export type CreateRouter = (params: LocationData) => Router
 export type GetKey = (params: LocationData) => string
 
 export interface IRouterManager {
-    /**
-     * Parsed observable route
-     */
-    route: IRoute;
-
     /**
      * Build url by page id and params
      *
@@ -169,7 +158,19 @@ export interface IRouterManager {
      * @param state?:   QueryMap replace query params in url
      */
     set(pageName: ?string, state?: QueryMap): void;
+
+    /**
+     * Update params or page url, based on current route
+     *
+     * @param pageName: ?string  if null - current pagename used
+     * @param state?:   QueryMap replace query params in url
+     */
     update(pageName: ?string, state?: QueryMap): void;
+
+    /**
+     * Invoke callback on location changes
+     */
+    onChange(fn: (route: IRoute) => void): () => void;
 }
 
 export interface PageRec<Widget, Component> {

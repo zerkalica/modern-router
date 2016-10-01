@@ -7,24 +7,20 @@ import type {
 } from 'modern-router/interfaces'
 
 export default class Route {
-    page: ?string;
-    query: QueryMap;
-    data: RouteData;
+    page: ?string
+    query: QueryMap
+    data: RouteData
 
     constructor(
         page?: ?string,
         query?: ?QueryMap,
-        data?: RouteData,
-        observable?: Observable<Route, Error>
+        data?: RouteData
     ) {
         this.page = page || null
         this.query = query || {}
         this.data = data || {
             isExternal: false,
             isReplace: false
-        }
-        if (observable) {
-            (this: Object)[Symbol.observable] = () => observable
         }
     }
 }

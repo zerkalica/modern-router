@@ -4,8 +4,10 @@ import type {
     LocationData
 } from 'modern-router/interfaces'
 
-import type {ServerResponse} from 'modern-router/server/fixes'
+import type {ServerResponse} from 'http'
 import AbstractLocation from 'modern-router/AbstractLocation'
+import type {LocationCallback} from 'modern-router/AbstractLocation'
+import Callbacks from 'modern-router/Callbacks'
 
 import {parse} from 'url'
 
@@ -15,15 +17,13 @@ interface Req {
     headers: Object;
 }
 
-
-function noop() {}
-
 export default class RawHttpServerLocation extends AbstractLocation {
-    _req: Req;
-    _res: ServerResponse;
+    _req: Req
+    _res: ServerResponse
 
-    _protocol: string;
-    _isTrustedProxy: boolean;
+    _protocol: string
+    _isTrustedProxy: boolean
+    _callbacks: Callbacks<LocationData> = new Callbacks()
 
     constructor(
         req: Req,
@@ -35,12 +35,26 @@ export default class RawHttpServerLocation extends AbstractLocation {
         this._req = req
         this._res = res
         this._protocol = isHttps ? 'https' : 'http'
-        this._isTrustedProxy = isTrustedProxy;
-        (this: Object)[Symbol.observable] = () => new Observable(noop)
+        this._isTrustedProxy = isTrustedProxy
+    }
+
+    _next(): void {
+        const data = this.getParams()
+        this._callbacks.next(data)
+    }
+
+    dispose(): void {
+        this._callbacks.dispose()
+    }
+
+    onChange(fn: LocationCallback): () => void {
+        fn(this.getParams())
+        return this._callbacks.onChange(fn)
     }
 
     replace(url: string): void {
         this.redirect(url)
+        this._next()
     }
 
     redirect(url: string): void {
@@ -48,6 +62,11 @@ export default class RawHttpServerLocation extends AbstractLocation {
             Location: url
         })
         this._res.end()
+        this._next()
+    }
+
+    postRedirect(): void {
+        throw new Error('Not implemented')
     }
 
     pushState(query: Object, name: string, url: string): void {

@@ -7,7 +7,7 @@ interface SusaninRec {
     defaults?: ?SimpleMap<string, string>;
     conditions?: ?SimpleMap<string, string|Array<string>>;
     page?: string;
-    data?: SimpleMap;
+    data?: SimpleMap<string, mixed>;
 }
 
 interface SusaninRoute<Data: Object, Params: Object> {
@@ -17,8 +17,8 @@ interface SusaninRoute<Data: Object, Params: Object> {
 
 interface Susanin {
     addRoute(rec: SusaninRec): void;
-    getRouteByName(name: string): ?SusaninRoute;
-    findFirst<Query: Object>(path: string, params?: SimpleMap): ?[SusaninRoute, Query];
+    getRouteByName(name: string): ?SusaninRoute<*, *>;
+    findFirst<Query: Object>(path: string, params?: SimpleMap<string, *>): ?[SusaninRoute<*, *>, Query];
 }
 
 declare module susanin {

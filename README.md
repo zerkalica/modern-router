@@ -17,174 +17,36 @@ Need Observable polyfill, use [zen-observable](https://github.com/zenparsing/zen
 8. Router can build urls to external resources
 9. Router should handle redirects to external resources, pushState on client side
 
-Interfaces
-----------
-
-```js
-interface RouterManager {
-
-    /**
-     * Parsed observable route
-     */
-    route: Route;
-
-    /**
-     * Build url by page id
-     *
-     * @param  name:    string        Page id
-     * @param  params?: QueryMap      page params
-     * @return url
-     */
-    build(name: string, params?: QueryMap): string;
-    set(pageName: ?string, state?: QueryMap): void;
-    update(pageName: ?string, state?: QueryMap): void;
-}
-```
-
-### Configuration
-
-```js
-
-type SimpleMap<V, K> = {[id: V]: K};
-
-/**
- * Page matching parameters
- */
-declare interface RouteConfigData {
-    /**
-     * Generate full url or not, overrides isFull in RouterConfig
-     */
-    isFull?: boolean;
-
-    /**
-     * On client do location.replaceState or location.pushState
-     */
-    isReplace?: boolean;
-
-    /**
-     * Match route by hostname
-     *
-     * On server side, if one server on multiple hosts
-     */
-    hostname?: string;
-
-    /**
-     * Match route by port
-     *
-     * On server side, if one configuration on multiple servers
-     */
-    port?: string;
-
-    /**
-     * Match route by protocol
-     *
-     * On server side, if one configuration on multiple servers
-     */
-    protocol?: string;
-
-    /**
-     * Match route by http method
-     *
-     * On server side
-     */
-    method?: string;
-}
-
-declare interface RouteConfig {
-    /**
-     * Route pattern
-     *
-     * @example
-     * /(<controller>(/<action>(/<id>)))
-     *
-     * @see https://github.com/nodules/susanin
-     */
-    pattern: string;
-
-    /**
-     * Default values for pattern
-     *
-     * @example
-     * ```js
-     * defaults: {
-     *    controller : 'index',
-     *    action : 'build'
-     * }
-     * ```
-     */
-    defaults?: SimpleMap<string, string>;
-
-    /**
-     * Conditions regexp map for pattern matching
-     *
-     * @example
-     * ```js
-     * conditions: {
-     *    id : '\\d{3,4}',
-     * }
-     * ```
-     */
-    conditions?: SimpleMap<string, string|string[]>;
-
-    /**
-     * Internal page id
-     */
-    page?: string;
-
-    /**
-     * Page matching parameters
-     */
-    data?: RouteConfigData;
-}
-
-declare interface RouterConfig {
-    /**
-     * Generate full url by default ?
-     */
-    isFull?: boolean;
-
-    /**
-     * Route map
-     */
-    routes: SimpleMap<string, RouteConfig>;
-}
-```
-
 Client usage
 ------------
 
 ```js
 // @flow
-import {BrowserLocation} from 'modern-router/browser'
-import {
-    RouterConfig,
-    RouterManagerFactory,
-    SusaninRouter
-} from 'modern-router'
-import type {
-    LocationData,
-    RouterManager
-} from 'modern-router'
+/* eslint-env browser */
+/* eslint-disable no-console */
 
-const config = new RouterConfig({
-    // generate full url by default
+import {SusaninRouter, RouterManager} from 'modern-router/index'
+import {BrowserLocation} from 'modern-router/browser'
+import type {IRoute} from 'modern-router/index'
+import type {IRouterConfig} from 'modern-router/interfaces'
+
+const location = new BrowserLocation(window)
+const config: IRouterConfig = {
     isFull: false,
     routes: {
-        'main.simple': {
-            pattern : '/page1',
-            page: 'MyPage1'
+        index: {
+            pattern: '/'
         },
-        'main.simple2': {
+        'main.simple': {
+            pattern: '/page1'
+        },
+        'main.full': {
             isFull: true,
-            pattern : '/page2',
-            page: 'MyPage2'
+            pattern: '/page2'
         },
         'main.index.complex': {
-            pattern : '/(<controller>(/<action>(/<id>)))',
-            page: 'MyPageWidget',
-            data: {
-                method: 'GET'
-            },
+            pattern: '/(<controller>(/<action>(/<id>)))',
+            method: 'GET',
             conditions: {
                 controller: ['index', 'crud'],
                 action: ['build', 'some'],
@@ -197,24 +59,20 @@ const config = new RouterConfig({
         },
         'some.external': {
             pattern: '/(<controller>)',
-            data: {
-                hostname: 'example.com',
-                port: '88',
-                protocol: 'https:'
-            }
+            hostname: 'example.com',
+            port: '88',
+            protocol: 'https:'
         }
     }
-})
+}
 
-const rm: RouterManager = (new RouterManagerFactory((params: LocationData) => new SusaninRouter(config, params)))
-    .create(new BrowserLocation(window))
+const rm = new RouterManager(
+    location,
+    new SusaninRouter(config, location.getParams())
+)
 
-Observable.from(rm.route).subscribe({
-    next(route: Route) {
-        console.log('page=', route.page, ', query=', route.query)
-    },
-    error() {},
-    complete() {}
+rm.onChange((route: IRoute) => {
+    console.log('page=', route.page, ', query=', route.query)
 })
 
 rm.update('main.index.complex', {
@@ -270,24 +128,15 @@ Server usage
 
 import http from 'http'
 
-import type {ServerResponse} from 'modern-router/i/fixes'
-import type {IncomingMessage} from 'http'
+import type {IncomingMessage, ServerResponse} from 'http'
 
 import {RawHttpServerLocation} from 'modern-router/server'
 
-import type {
-    LocationData,
-    IRoute,
-    RouterManager
-} from 'modern-router'
+import type {RouterManager} from 'modern-router/index'
 
-import {
-    SusaninRouter,
-    RouterManagerFactory,
-    RouterConfig
-} from 'modern-router'
+import {createRouterFactory} from 'modern-router/index'
 
-const config: RouterConfig = new RouterConfig({
+const config = {
     routes: {
         'main.simple': {
             pattern: '/page1',
@@ -299,23 +148,183 @@ const config: RouterConfig = new RouterConfig({
             page: 'MyPage2'
         }
     }
-})
+}
 
-const serverRouterManagerFactory = new RouterManagerFactory(
-    (params: LocationData) => new SusaninRouter(config, params)
-)
+const rf = createRouterFactory(config)
 
 http.createServer((req: IncomingMessage, res: ServerResponse) => {
-    const routerManager: RouterManager = serverRouterManagerFactory.create(
+    const routerManager: RouterManager = rf(
         new RawHttpServerLocation((req: any), res)
     )
-    const route: ?IRoute = routerManager.route
-    if (!route) {
-        res.writeHead(404)
-        res.end('Page not found')
-    }
-    res.end(JSON.stringify(route))
+    routerManager.onChange((route) => {
+        if (!route.page) {
+            res.writeHead(404)
+            res.end(`
+                <a href="/page1">main.simple</a>
+                <a href="/page2">main.simple2</a>
+            `)
+        }
+        res.end(JSON.stringify(route))
+        routerManager.dispose()
+    })
 }).listen(8080)
 
 console.log('Server started at https://localhost:8080/')
+```
+
+Interfaces
+----------
+
+```js
+export type QueryMap = {[id: string]: (string | string[])}
+
+export interface RouterManager {
+    /**
+     * Build url by page id and params
+     *
+     * @param  name:    string        Page id
+     * @param  params?: QueryMap      page params
+     * @return url
+     */
+    build(name: string, params?: QueryMap): string;
+
+    /**
+     * Set location or redirect on server side
+     *
+     * @param pageName: ?string  if null - current pagename used
+     * @param state?:   QueryMap replace query params in url
+     */
+    set(pageName: ?string, state?: QueryMap): void;
+
+    /**
+     * Update params or page url, based on current route
+     *
+     * @param pageName: ?string  if null - current pagename used
+     * @param state?:   QueryMap replace query params in url
+     */
+    update(pageName: ?string, state?: QueryMap): void;
+
+    /**
+     * Invoke callback on location changes
+     */
+    onChange(fn: (route: IRoute) => void): () => void;
+}
+```
+
+### Configuration
+
+```js
+
+type SimpleMap<V, K> = {[id: V]: K};
+
+export interface RouteConfig {
+    /**
+     * Route pattern
+     *
+     * @example
+     * /(<controller>(/<action>(/<id>)))
+     *
+     * @see https://github.com/nodules/susanin
+     */
+    pattern: string;
+
+    /**
+     * Default values for pattern
+     *
+     * @example
+     * ```js
+     * defaults: {
+     *    controller : 'index',
+     *    action : 'build'
+     * }
+     * ```
+     */
+    defaults?: SimpleMap<string, string>;
+
+    /**
+     * Conditions regexp map for pattern matching
+     *
+     * @example
+     * ```js
+     * conditions: {
+     *    id : '\\d{3,4}',
+     * }
+     * ```
+     */
+    conditions?: SimpleMap<string, string | string[]>;
+
+    /**
+     * Internal page id
+     */
+    page?: string;
+
+    /**
+     * Page matching parameters
+     */
+
+     /**
+      * Generate full url or not, overrides isFull in RouterConfig
+      */
+     isFull?: boolean;
+
+     /**
+      * On client do location.replaceState or location.pushState
+      */
+     isReplace?: boolean;
+
+     /**
+      * Match route by hostnamePageMap
+      *
+      * On server side, if one server on multiple hosts
+      */
+     hostname?: string;
+
+     /**
+      * Match route by port
+      *
+      * On server side, if one configuration on multiple servers
+      */
+     port?: string;
+
+     /**
+      * Match route by protocol
+      *
+      * On server side, if one configuration on multiple servers
+      */
+     protocol?: string;
+
+     /**
+      * Match route by http method
+      *
+      * On server side
+      */
+     method?: string;
+}
+
+export interface IRouterConfig {
+    /**
+     * Generate full url by default ?
+     */
+    isFull?: boolean;
+
+    /**
+     * Route map
+     */
+    routes: SimpleMap<string, RouteConfig>;
+}
+```
+
+## Run examples
+
+Browser example:
+
+```bash
+npm install
+npm run example.browser
+```
+
+Server example:
+
+```bash
+npm run example.server
 ```

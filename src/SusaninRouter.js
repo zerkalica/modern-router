@@ -3,17 +3,16 @@
 import Susanin from 'susanin'
 
 import type {
+    IRouterConfig,
     Router,
     IRoute,
     QueryMap,
     RouteData,
     LocationDataBase,
     LocationData,
-    RouteConfigData,
     RouteConfig
 } from 'modern-router/interfaces'
 
-import RouterConfig from 'modern-router/RouterConfig'
 import Route from 'modern-router/Route'
 
 type LocationParams = {
@@ -54,25 +53,35 @@ type RouteSusaninData = {
     origin: string;
 }
 
+export interface DefaultLocation {
+    hostname: string;
+    port: ?string;
+    protocol: string;
+    method: string;
+}
+
 // implements Router
 export default class SusaninRouter {
-    _susanin: Susanin;
-    _defaultIsFull: boolean;
-    _defaultLocation: LocationDataBase;
+    _susanin: Susanin
+    _defaultIsFull: boolean
+    _defaultLocation: DefaultLocation
 
     constructor(
-        config: RouterConfig,
-        cl: LocationData
+        config: IRouterConfig,
+        defaultLocation: DefaultLocation
     ) {
         const {routes, isFull} = config
+        if (!routes) {
+            throw new Error('No routes found in config')
+        }
         this._defaultIsFull = isFull || false
         this._susanin = new Susanin()
         const keys = Object.keys(routes)
         this._defaultLocation = {
-            hostname: cl.hostname,
-            port: cl.port,
-            protocol: cl.protocol,
-            method: cl.method
+            hostname: defaultLocation.hostname,
+            port: defaultLocation.port,
+            protocol: defaultLocation.protocol,
+            method: defaultLocation.method
         }
         for (let i = 0, l = keys.length; i < l; i++) {
             this._addRoute(keys[i], routes[keys[i]])
@@ -80,16 +89,15 @@ export default class SusaninRouter {
     }
 
     _addRoute(name: string, config: RouteConfig): void {
-        const cd: RouteConfigData = config.data || {};
         const dl = this._defaultLocation
         const rd: LocationDataBase = {
-            hostname: cd.hostname || dl.hostname,
-            port: cd.port || dl.port,
-            protocol: cd.protocol || dl.protocol,
-            method: cd.method || dl.method
+            hostname: config.hostname || dl.hostname,
+            port: config.port || dl.port,
+            protocol: config.protocol || dl.protocol,
+            method: config.method || dl.method
         }
 
-        const isExternal: boolean = !!(cd.port || cd.hostname || cd.protocol)
+        const isExternal: boolean = !!(config.port || config.hostname || config.protocol)
 
         const data: RouteSusaninData = {
             page: config.page || name,
@@ -99,11 +107,11 @@ export default class SusaninRouter {
             protocol: rd.protocol,
             method: rd.method || 'GET',
             isExternal,
-            isReplace: cd.isReplace || false,
+            isReplace: config.isReplace || false,
             isFull: isExternal || (
-                cd.isFull === undefined
+                config.isFull === undefined
                     ? this._defaultIsFull
-                    : cd.isFull
+                    : config.isFull
              )
         }
 
@@ -114,6 +122,16 @@ export default class SusaninRouter {
             conditions: config.conditions,
             data
         })
+    }
+
+    getRouteByName(name: string): ?IRoute {
+        const route = this._susanin.getRouteByName(name)
+        if (!route) {
+            return null
+        }
+        const data = route.getData()
+
+        return new Route(data.page, {}, data)
     }
 
     build(name: string, params?: QueryMap = {}): string {
@@ -127,13 +145,13 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationData, observable?: Observable<Route, Error>): IRoute {
+    find(options: LocationData): IRoute {
         const params: LocationParams = routerLocationToParams(options)
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {
             const [route, query] = rec
-            const data: RouteSusaninData = route.getData();
-            return new Route(data.page, query, (data: RouteData), observable)
+            const data: RouteSusaninData = route.getData()
+            return new Route(data.page, query, (data: RouteData))
         }
 
         return new Route()

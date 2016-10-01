@@ -4,38 +4,12 @@ import type {
     QueryMap,
     Router,
     RouteData,
+    LocationData,
     IRouterManager
 } from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
-import {ObserverBroker} from 'observable-helpers'
 import AbstractLocation from 'modern-router/AbstractLocation'
-
-class LocationObserver {
-    _setLocation: (location: AbstractLocation) => void;
-    _observer: SubscriptionObserver<IRoute, Error>;
-
-    constructor(
-        setLocation: (location: AbstractLocation) => void,
-        observer: SubscriptionObserver<IRoute, Error>
-    ) {
-        this._setLocation = setLocation
-        this._observer = observer
-    }
-
-    next(location: AbstractLocation): void {
-        this._setLocation(location)
-    }
-
-    complete(): void {
-        this._observer.complete()
-    }
-
-    error(err: Error): void {
-        this._observer.error(err)
-    }
-}
-if (0) (new LocationObserver(...(0: any)): Observer<AbstractLocation, Error>) // eslint-disable-line
 
 interface Params {
     query: QueryMap,
@@ -45,14 +19,12 @@ interface Params {
     isExternal: boolean
 }
 
-export default class RouterManager {
-    _router: Router;
-    _location: AbstractLocation;
-    _observable: Observable<IRoute, Error>;
-    _observer: SubscriptionObserver<IRoute, Error>;
-    _subscription: Subscription;
+export type RouterCallback = (route: IRoute) => void
 
-    route: IRoute;
+export default class RouterManager {
+    _router: Router
+    _currentRoute: ?IRoute
+    _location: AbstractLocation
 
     constructor(
         location: AbstractLocation,
@@ -60,29 +32,17 @@ export default class RouterManager {
     ) {
         this._router = router
         this._location = location
-
-        const broker = new ObserverBroker()
-        this._observer = broker
-        this._observable = broker.observable
-        this._subscription = Observable.from(location).subscribe(
-            new LocationObserver(
-                (loc: AbstractLocation) => {
-                    this._location = loc
-                    this._next()
-                },
-                this._observer
-            )
-        )
-        this.route = this._resolve()
     }
 
     dispose(): void {
-        this._subscription.unsubscribe()
-        this._observer.complete()
+        this._location.dispose()
     }
 
     _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
-        const route: IRoute = this._resolve()
+        const route: ?IRoute = pageName
+            ? this._router.getRouteByName(pageName)
+            : this._currentRoute
+
         if (!route) {
             return null
         }
@@ -97,7 +57,6 @@ export default class RouterManager {
         const data: RouteData = route.data
 
         return {
-            // Query already in url
             query: {},
             name,
             url: this._router.build(name, query),
@@ -119,25 +78,24 @@ export default class RouterManager {
                 this._location.replace(url)
             } else {
                 this._location.replaceState(query, name, url)
-                this._next()
             }
+            return
+        }
+
+        if (isExternal) {
+            this._location.redirect(url)
         } else {
-            if (isExternal) {
-                this._location.redirect(url)
-            } else {
-                this._location.pushState(query, name, url)
-                this._next()
-            }
+            this._location.pushState(query, name, url)
         }
     }
 
-    _resolve(): IRoute {
-        return this._router.find(this._location.getParams(), this._observable)
-    }
+    onChange(fn: (route: IRoute) => void): () => void {
+        const locationToRoute = (data: LocationData) => {
+            this._currentRoute = this._router.find(data)
+            return fn(this._currentRoute)
+        }
 
-    _next(): void {
-        this.route = this._resolve()
-        this._observer.next(this.route)
+        return this._location.onChange(locationToRoute)
     }
 
     update(pageName: ?string, state?: QueryMap): void {
