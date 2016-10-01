@@ -144,6 +144,11 @@ const config = {
             isFull: true,
             pattern: '/page2',
             page: 'MyPage2'
+        },
+        'json.example1': {
+            pattern: '/json-page',
+            page: 'JsonPage',
+            format: 'json'
         }
     }
 }
@@ -160,6 +165,7 @@ http.createServer((req: IncomingMessage, res: ServerResponse) => {
             res.end(`
                 <a href="/page1">main.simple</a>
                 <a href="/page2">main.simple2</a>
+                <a href="/json-page">json.example1</a>
             `)
         }
         res.end(JSON.stringify(route))
@@ -214,6 +220,7 @@ export interface RouterManager {
 ```js
 
 type SimpleMap<V, K> = {[id: V]: K};
+export type ContentFormat = 'html' | 'json'
 
 export interface RouteConfig {
     /**
@@ -297,6 +304,11 @@ export interface RouteConfig {
       * On server side
       */
     method?: string;
+
+    /**
+     * Match route by content-type header
+     */
+    format?: ContentFormat;
 }
 
 export interface IRouterConfig {
