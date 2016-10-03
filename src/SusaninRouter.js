@@ -6,7 +6,6 @@ import type {
     ContentFormat,
     IRouterConfig,
     Router,
-    IRoute,
     QueryMap,
     RouteData,
     LocationDataBase,
@@ -130,7 +129,7 @@ export default class SusaninRouter {
         })
     }
 
-    getRouteByName(name: string): ?IRoute {
+    getRouteByName(name: string): ?Route {
         const route = this._susanin.getRouteByName(name)
         if (!route) {
             return null
@@ -151,7 +150,7 @@ export default class SusaninRouter {
         return (data.isFull ? data.origin : '') + route.build(params)
     }
 
-    find(options: LocationData): IRoute {
+    find(options: LocationData): Route {
         const params: LocationParams = routerLocationToParams(options)
         const rec = this._susanin.findFirst(params.path, params.params)
         if (rec) {

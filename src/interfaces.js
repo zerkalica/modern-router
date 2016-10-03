@@ -1,5 +1,7 @@
 /* @flow */
 
+import Route from './Route'
+
 export type SimpleMap<V, K> = {[id: V]: K};
 
 export type ContentFormat = 'html' | 'json'
@@ -134,52 +136,13 @@ export interface RouteData {
     isReplace: boolean;
 }
 
-export interface IRoute {
-    page: ?string;
-    query: QueryMap;
-    data: RouteData;
-}
-
 export interface Router {
-    find(options: LocationData): IRoute;
+    find(options: LocationData): Route;
     build(name: string, params?: QueryMap): string;
-    getRouteByName(name: string): ?IRoute;
+    getRouteByName(name: string): ?Route;
 }
 
-export type CreateRouter = (params: LocationData) => Router
 export type GetKey = (params: LocationData) => string
-
-export interface IRouterManager {
-    /**
-     * Build url by page id and params
-     *
-     * @param  name:    string        Page id
-     * @param  params?: QueryMap      page params
-     * @return url
-     */
-    build(name: string, params?: QueryMap): string;
-
-    /**
-     * Set location or redirect on server side
-     *
-     * @param pageName: ?string  if null - current pagename used
-     * @param state?:   QueryMap replace query params in url
-     */
-    set(pageName: ?string, state?: QueryMap): void;
-
-    /**
-     * Update params or page url, based on current route
-     *
-     * @param pageName: ?string  if null - current pagename used
-     * @param state?:   QueryMap replace query params in url
-     */
-    update(pageName: ?string, state?: QueryMap): void;
-
-    /**
-     * Invoke callback on location changes
-     */
-    onChange(fn: (route: IRoute) => void): () => void;
-}
 
 export interface PageRec<Widget, Component> {
     ErrorPage: Widget;

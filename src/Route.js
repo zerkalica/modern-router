@@ -1,7 +1,6 @@
 /* @flow */
 
 import type {
-    IRoute,
     QueryMap,
     RouteData
 } from 'modern-router/interfaces'
@@ -24,4 +23,3 @@ export default class Route {
         }
     }
 }
-if (0) (new Route(...(0: any)): IRoute) // eslint-disable-line

@@ -1,15 +1,14 @@
 /* @flow */
 import type {
-    IRoute,
     QueryMap,
     Router,
     RouteData,
-    LocationData,
-    IRouterManager
+    LocationData
 } from 'modern-router/interfaces'
 
 import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
 import AbstractLocation from 'modern-router/AbstractLocation'
+import Route from 'modern-router/Route'
 
 interface Params {
     query: QueryMap,
@@ -19,11 +18,14 @@ interface Params {
     isExternal: boolean
 }
 
-export type RouterCallback = (route: IRoute) => void
+export type RouterCallback = (route: Route) => void
 
+/**
+ * Router manager
+ */
 export default class RouterManager {
     _router: Router
-    _currentRoute: ?IRoute
+    _currentRoute: ?Route
     _location: AbstractLocation
 
     constructor(
@@ -39,7 +41,7 @@ export default class RouterManager {
     }
 
     _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
-        const route: ?IRoute = pageName
+        const route: ?Route = pageName
             ? this._router.getRouteByName(pageName)
             : this._currentRoute
 
@@ -65,6 +67,12 @@ export default class RouterManager {
         }
     }
 
+    /**
+     * Set location or redirect on server side
+     *
+     * @param pageName: ?string  if null - current pagename used
+     * @param state?:   QueryMap replace query params in url
+     */
     set(pageName: ?string, state?: QueryMap, replaceState: boolean = true): void {
         const params: ?Params = this._getParams(pageName, state, replaceState)
         if (!params) {
@@ -89,7 +97,10 @@ export default class RouterManager {
         }
     }
 
-    onChange(fn: (route: IRoute) => void): () => void {
+    /**
+     * Invoke callback on location changes
+     */
+    onChange(fn: RouterCallback): () => void {
         const locationToRoute = (data: LocationData) => {
             this._currentRoute = this._router.find(data)
             return fn(this._currentRoute)
@@ -98,13 +109,24 @@ export default class RouterManager {
         return this._location.onChange(locationToRoute)
     }
 
+    /**
+     * Update params or page url, based on current route
+     *
+     * @param pageName: ?string  if null - current pagename used
+     * @param state?:   QueryMap replace query params in url
+     */
     update(pageName: ?string, state?: QueryMap): void {
         this.set(pageName, state, false)
     }
 
+    /**
+     * Build url by page id and params
+     *
+     * @param  name:    string        Page id
+     * @param  params?: QueryMap      page params
+     * @return url
+     */
     build(name: string, params?: QueryMap = {}): string {
         return this._router.build(name, params)
     }
 }
-
-if (0) (new RouterManager(...(0: any)): IRouterManager) // eslint-disable-line

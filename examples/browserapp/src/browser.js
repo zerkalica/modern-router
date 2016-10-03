@@ -2,9 +2,8 @@
 /* eslint-env browser */
 /* eslint-disable no-console */
 
-import {SusaninRouter, RouterManager} from 'modern-router/index'
+import {Route, SusaninRouter, RouterManager} from 'modern-router/index'
 import {BrowserLocation} from 'modern-router/browser'
-import type {IRoute} from 'modern-router/index'
 import type {IRouterConfig} from 'modern-router/interfaces'
 
 const location = new BrowserLocation(window)
@@ -85,7 +84,7 @@ for (let i = 0; i < keys.length; i++) {
 
 const routeInfo = document.getElementById('routeInfo')
 const routeConfig = document.getElementById('routeConfig')
-rm.onChange((route: IRoute) => {
+rm.onChange((route: Route) => {
     routeConfig.textContent = JSON.stringify(routes[route.page || ''] || null, null, '  ')
     routeInfo.textContent = JSON.stringify(route, null, '  ')
 })

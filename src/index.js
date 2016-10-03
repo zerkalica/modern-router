@@ -9,11 +9,8 @@ import RouterManager from 'modern-router/RouterManager'
 import AbstractLocation from 'modern-router/AbstractLocation'
 
 export type {
-    PageRec,
     LocationData,
-    IRoute,
     Router,
-    IRouterManager,
     RouteConfig,
     IRouterConfig
 } from 'modern-router/interfaces'
