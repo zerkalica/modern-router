@@ -7,7 +7,7 @@ interface SusaninRec {
     defaults?: ?SimpleMap<string, string>;
     conditions?: ?SimpleMap<string, string|Array<string>>;
     page?: string;
-    data?: SimpleMap<string, mixed>;
+    data?: SimpleMap<string, any>;
 }
 
 interface SusaninRoute<Data: Object, Params: Object> {

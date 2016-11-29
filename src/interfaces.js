@@ -6,7 +6,7 @@ export type SimpleMap<V, K> = {[id: V]: K};
 
 export type ContentFormat = 'html' | 'json'
 
-export interface RouteConfig {
+export type RouteConfig = {
     /**
      * Route pattern
      *
