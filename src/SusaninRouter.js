@@ -67,12 +67,14 @@ export default class SusaninRouter {
     _susanin: Susanin
     _defaultIsFull: boolean
     _defaultLocation: DefaultLocation
+    _prefix: string
 
     constructor(
         config: IRouterConfig,
         defaultLocation: DefaultLocation
     ) {
-        const {routes, isFull} = config
+        const {routes, isFull, prefix} = config
+        this._prefix = prefix || ''
         if (!routes) {
             throw new Error('No routes found in config')
         }
@@ -152,7 +154,12 @@ export default class SusaninRouter {
 
     find(options: LocationData): Route {
         const params: LocationParams = routerLocationToParams(options)
-        const rec = this._susanin.findFirst(params.path, params.params)
+        const path = (this._prefix && params.path.indexOf(this._prefix) === 0)
+            ? params.path.substring(this._prefix.length)
+            : params.path
+
+        const rec = this._susanin.findFirst(path, params.params)
+
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData()

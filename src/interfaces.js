@@ -102,6 +102,11 @@ export interface IRouterConfig {
     isFull?: boolean;
 
     /**
+     * All routes prefix
+     */
+    prefix?: string;
+
+    /**
      * Route map
      */
     routes: SimpleMap<string, RouteConfig>;
