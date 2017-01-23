@@ -73,6 +73,9 @@ function createLink(key, prms?: Object): HTMLElement {
 
 const routes = config.routes || {}
 const nav = document.getElementById('navigation')
+if (!nav) {
+    throw new Error('Can\'t find navigation')
+}
 const keys: string[] = Object.keys(routes || {})
 for (let i = 0; i < keys.length; i++) {
     const key: string = keys[i]
@@ -84,6 +87,10 @@ for (let i = 0; i < keys.length; i++) {
 
 const routeInfo = document.getElementById('routeInfo')
 const routeConfig = document.getElementById('routeConfig')
+if (!routeConfig || !routeInfo) {
+    throw new Error('Can\'t find routeConfig or routeInfo')
+}
+
 rm.onChange((route: Route) => {
     routeConfig.textContent = JSON.stringify(routes[route.page || ''] || null, null, '  ')
     routeInfo.textContent = JSON.stringify(route, null, '  ')

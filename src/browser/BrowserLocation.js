@@ -93,7 +93,9 @@ export default class BrowserLocation extends AbstractLocation {
             inputNode.setAttribute('value', params[name])
             formNode.appendChild(inputNode)
         }
-        d.body.appendChild(formNode)
+        if (d.body) {
+            d.body.appendChild(formNode)
+        }
         formNode.submit()
     }
 
