@@ -14,13 +14,13 @@ fallback.push(path.resolve(root, 'node_modules'))
 export default {
     // cwd: path.resolve(__dirname, '..'),
     cache: true,
-    debug: true,
+//    debug: true,
     devtool: 'source-map',
     resolve: {
-        fallback
+//        fallback
     },
     resolveLoader: {
-        fallback
+//        fallback
     },
     output: {
         publicPath: '/',

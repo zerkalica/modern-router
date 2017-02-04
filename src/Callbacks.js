@@ -20,7 +20,7 @@ export default class Callbacks<V> {
     onChange(fn: Callback<V>): () => void {
         this._callbacks.push(fn)
 
-        const filterCallbacks = (cb) => cb !== fn
+        const filterCallbacks = (cb: Callback<*>) => cb !== fn
         const unsubscribe = () => {
             this._callbacks = this._callbacks.filter(filterCallbacks)
         }

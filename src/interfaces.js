@@ -2,7 +2,7 @@
 
 import Route from './Route'
 
-export type SimpleMap<V, K> = {[id: V]: K};
+export type SimpleMap<V, K> = {[id: V]: K}
 
 export type ContentFormat = 'html' | 'json'
 

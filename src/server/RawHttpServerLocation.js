@@ -139,7 +139,7 @@ export default class RawHttpServerLocation extends AbstractLocation {
 
         const protocol: string = this._isTrustedProxy
             ? (headers['x-forwared-proto'] || this._protocol)
-            : this._protocol;
+            : this._protocol
 
         return {
             hostname,

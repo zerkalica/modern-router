@@ -30,13 +30,15 @@ export default class BrowserLocation extends AbstractLocation {
     _history: History
     _document: Document
     _callbacks: Callbacks<LocationData> = new Callbacks()
+    _noFeedback: boolean
 
-    constructor(win: Object) {
+    constructor(win: Object, noFeedback?: boolean) {
         super()
         this._location = win.history.location || win.location
         this._history = win.history
         this._document = win.document
-        listenEvent(win, 'popstate', () => this._next())
+        this._noFeedback = noFeedback || false
+        listenEvent(win, 'popstate', () => this._nextHistory())
     }
 
     getParams(): LocationData {
@@ -53,9 +55,14 @@ export default class BrowserLocation extends AbstractLocation {
         }
     }
 
+    _nextHistory(): void {
+        this._callbacks.next(this.getParams())
+    }
+
     _next(): void {
-        const data = this.getParams()
-        this._callbacks.next(data)
+        if (!this._noFeedback) {
+            this._callbacks.next(this.getParams())
+        }
     }
 
     dispose(): void {
