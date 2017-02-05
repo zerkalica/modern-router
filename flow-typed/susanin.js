@@ -11,7 +11,11 @@ interface SusaninRec {
 }
 
 interface SusaninRoute<Data: Object, Params: Object> {
+    _options: {
+        defaults: Object;
+    };
     getData(): Data;
+    getName(): string;
     build(params: Params): string;
 }
 

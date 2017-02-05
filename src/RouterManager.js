@@ -49,7 +49,7 @@ export default class RouterManager {
         if (!route) {
             return null
         }
-        const name: string = pageName || route.page || ''
+        const name: string = pageName || route.name || ''
         const st: QueryMap = state || {}
         const query: QueryMap = replaceQuery
             ? st

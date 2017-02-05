@@ -14,6 +14,7 @@ import type {
 } from 'modern-router/interfaces'
 
 import Route from 'modern-router/Route'
+import shallowEqual from './shallowEqual'
 
 type LocationParams = {
     path: string;
@@ -138,7 +139,7 @@ export default class SusaninRouter {
         }
         const data = route.getData()
 
-        return new Route(data.page, {}, data)
+        return new Route(data.page, route.getName(), {}, data)
     }
 
     build(name: string, params?: QueryMap = {}): string {
@@ -148,8 +149,11 @@ export default class SusaninRouter {
         }
 
         const data: RouteSusaninData = route.getData()
+        const newParams = shallowEqual(params, route._options.defaults)
+            ? {}
+            : params
 
-        return (data.isFull ? data.origin : '') + route.build(params)
+        return (data.isFull ? data.origin : '') + route.build(newParams)
     }
 
     find(options: LocationData): Route {
@@ -163,7 +167,7 @@ export default class SusaninRouter {
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData()
-            return new Route(data.page, query, (data: RouteData))
+            return new Route(data.page, route.getName(), query, (data: RouteData))
         }
 
         return new Route()
