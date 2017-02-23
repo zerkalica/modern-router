@@ -19,7 +19,7 @@ export default class Route {
     query: QueryMap
     data: RouteData
 
-    constructor(rec: IRouteOpts) {
+    constructor(rec?: IRouteOpts = {}) {
         this.page = rec.page || null
         this.name = rec.name || ''
         this.query = rec.query || {}
