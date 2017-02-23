@@ -1,6 +1,6 @@
 /* @flow */
 
-import RawHttpServerLocation from 'modern-router/server/RawHttpServerLocation'
+import RawHttpServerLocation from './RawHttpServerLocation'
 
 export {
     RawHttpServerLocation

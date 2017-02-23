@@ -55,7 +55,7 @@ const params = {
     }
 }
 
-function createLink(key, prms?: Object): HTMLElement {
+function createLink(key: string, prms?: Object): HTMLElement {
     const a = document.createElement('a')
     a.setAttribute('href', rm.build(key, prms))
 
@@ -92,6 +92,6 @@ if (!routeConfig || !routeInfo) {
 }
 
 rm.onChange((route: Route) => {
-    routeConfig.textContent = JSON.stringify(routes[route.page || ''] || null, null, '  ')
+    routeConfig.textContent = JSON.stringify(routes[route.name || ''] || null, null, '  ')
     routeInfo.textContent = JSON.stringify(route, null, '  ')
 })

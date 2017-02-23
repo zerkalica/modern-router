@@ -11,9 +11,9 @@ import type {
     LocationDataBase,
     LocationData,
     RouteConfig
-} from 'modern-router/interfaces'
+} from './interfaces'
 
-import Route from 'modern-router/Route'
+import Route from './Route'
 import shallowEqual from './shallowEqual'
 
 type LocationParams = {
@@ -64,7 +64,7 @@ export interface DefaultLocation {
 }
 
 // implements Router
-export default class SusaninRouter {
+export default class SusaninRouter implements Router {
     _susanin: Susanin
     _defaultIsFull: boolean
     _defaultLocation: DefaultLocation
@@ -167,11 +167,14 @@ export default class SusaninRouter {
         if (rec) {
             const [route, query] = rec
             const data: RouteSusaninData = route.getData()
-            return new Route(data.page, route.getName(), query, (data: RouteData))
+            return new Route({
+                page: data.page,
+                name: route.getName(),
+                query,
+                data: (data: RouteData)
+            })
         }
 
-        return new Route()
+        return new Route({})
     }
 }
-
-if (0) (new SusaninRouter(...(0: any)): Router) // eslint-disable-line

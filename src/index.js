@@ -1,19 +1,19 @@
 /* @flow */
 
-import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
-import Route from 'modern-router/Route'
-import RouterConfig from 'modern-router/RouterConfig'
-import createRouterFactory from 'modern-router/createRouterFactory'
-import SusaninRouter from 'modern-router/SusaninRouter'
-import RouterManager from 'modern-router/RouterManager'
-import AbstractLocation from 'modern-router/AbstractLocation'
+import PageNotFoundError from './errors/PageNotFoundError'
+import Route from './Route'
+import RouterConfig from './RouterConfig'
+import createRouterFactory from './createRouterFactory'
+import SusaninRouter from './SusaninRouter'
+import RouterManager from './RouterManager'
+import AbstractLocation from './AbstractLocation'
 
 export type {
     LocationData,
     Router,
     RouteConfig,
     IRouterConfig
-} from 'modern-router/interfaces'
+} from './interfaces'
 
 export {
     SusaninRouter,

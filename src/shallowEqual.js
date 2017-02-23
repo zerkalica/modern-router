@@ -1,6 +1,6 @@
 // @flow
 
-export default function shallowEqual(oldProps: Object, props: Object): boolean {
+export default function shallowEqual(oldProps: ?Object, props: Object): boolean {
     if (oldProps === props) {
         return true
     }

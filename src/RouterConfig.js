@@ -4,12 +4,12 @@ import type {
     SimpleMap,
     RouteConfig,
     IRouterConfig
-} from 'modern-router/interfaces'
+} from './interfaces'
 
 /**
  * Normalized router config class
  */
-export default class RouterConfig {
+export default class RouterConfig implements IRouterConfig {
     isFull: boolean
     routes: SimpleMap<string, RouteConfig>
     prefix: string
@@ -20,4 +20,3 @@ export default class RouterConfig {
         this.prefix = rec.prefix || ''
     }
 }
-if (0) (new RouterConfig(...(0: any)): IRouterConfig) // eslint-disable-line

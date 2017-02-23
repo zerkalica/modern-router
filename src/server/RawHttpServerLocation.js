@@ -170,4 +170,3 @@ export default class RawHttpServerLocation extends AbstractLocation {
         return result
     }
 }
-if (0) (new RawHttpServerLocation(...(0: any)): AbstractLocation) // eslint-disable-line

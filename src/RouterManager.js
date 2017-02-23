@@ -4,11 +4,11 @@ import type {
     Router,
     RouteData,
     LocationData
-} from 'modern-router/interfaces'
+} from './interfaces'
 
-import PageNotFoundError from 'modern-router/errors/PageNotFoundError'
-import AbstractLocation from 'modern-router/AbstractLocation'
-import Route from 'modern-router/Route'
+import PageNotFoundError from './errors/PageNotFoundError'
+import AbstractLocation from './AbstractLocation'
+import Route from './Route'
 
 interface Params {
     query: QueryMap,

@@ -8,7 +8,7 @@ import type {IncomingMessage, ServerResponse} from 'http'
 
 import {RawHttpServerLocation} from 'modern-router/server'
 
-import type {RouterManager} from 'modern-router/index'
+import type {RouterManager, Route} from 'modern-router/index'
 
 import {createRouterFactory} from 'modern-router/index'
 
@@ -37,7 +37,7 @@ http.createServer((req: IncomingMessage, res: ServerResponse) => {
     const routerManager: RouterManager = rf(
         new RawHttpServerLocation((req: any), res)
     )
-    routerManager.onChange((route) => {
+    routerManager.onChange((route: Route) => {
         if (!route.page) {
             res.writeHead(404)
             res.end(`

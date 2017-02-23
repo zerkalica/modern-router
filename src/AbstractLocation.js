@@ -1,5 +1,5 @@
 // @flow
-import type {QueryMap, LocationData} from 'modern-router/interfaces'
+import type {QueryMap, LocationData} from './interfaces'
 
 export type LocationCallback = (data: LocationData) => void
 export default class AbstractLocation {
