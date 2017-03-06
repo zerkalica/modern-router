@@ -35,6 +35,9 @@ export default class Route {
             && shallowEqual(rec.query, this.query)
             && shallowEqual(rec.data, this.data)
                 ? this
-                : new Route(rec)
+                : new Route({
+                    ...this,
+                    ...rec
+                })
     }
 }
