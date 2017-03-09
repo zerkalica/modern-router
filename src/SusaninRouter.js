@@ -132,7 +132,7 @@ export default class SusaninRouter implements Router {
         })
     }
 
-    getRouteByName(name: string): ?Route {
+    getRouteByName(name: string, query?: ?Object): ?Route {
         const route = this._susanin.getRouteByName(name)
         if (!route) {
             return null
@@ -143,7 +143,7 @@ export default class SusaninRouter implements Router {
             page: data.page,
             name: route.getName(),
             data,
-            query: {}
+            query: query || {}
         })
     }
 

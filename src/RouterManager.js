@@ -43,7 +43,7 @@ export default class RouterManager {
     _getParams(pageName: ?string, state: ?QueryMap, replaceQuery: boolean): ?Params {
         const cr = this._currentRoute
         const route: ?Route = pageName
-            ? this._router.getRouteByName(pageName)
+            ? this._router.getRouteByName(pageName, state)
             : cr
 
         if (!route) {
