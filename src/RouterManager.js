@@ -49,6 +49,7 @@ export default class RouterManager {
         if (!route) {
             return null
         }
+        this._currentRoute = route
         const name: string = pageName || route.name || ''
         const st: QueryMap = state || {}
         const query: QueryMap = replaceQuery
@@ -74,10 +75,13 @@ export default class RouterManager {
      * @param pageName: ?string  if null - current pagename used
      * @param state?:   QueryMap replace query params in url
      */
-    set(pageName: ?string, state?: QueryMap, replaceState: boolean = true): void {
+    set(pageName: ?string, state?: QueryMap, replaceState: boolean = true): Route {
         const params: ?Params = this._getParams(pageName, state, replaceState)
         if (!params) {
             throw new PageNotFoundError(pageName)
+        }
+        if (!this._currentRoute) {
+            throw new Error('currentRoute is null')
         }
 
         const {query, name, url, isReplace, isExternal} = params
@@ -88,7 +92,7 @@ export default class RouterManager {
             } else {
                 this._location.replaceState(query, name, url)
             }
-            return
+            return this._currentRoute
         }
 
         if (isExternal) {
@@ -96,6 +100,8 @@ export default class RouterManager {
         } else {
             this._location.pushState(query, name, url)
         }
+
+        return this._currentRoute
     }
 
     /**

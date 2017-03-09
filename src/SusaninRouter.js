@@ -139,7 +139,12 @@ export default class SusaninRouter implements Router {
         }
         const data = route.getData()
 
-        return new Route(data.page, route.getName(), {}, data)
+        return new Route({
+            page: data.page,
+            name: route.getName(),
+            data,
+            query: {}
+        })
     }
 
     build(name: string, params?: QueryMap = {}): string {
