@@ -13,6 +13,21 @@ export type IRouteOpts = {
     data?: RouteData
 }
 
+function mergeQuery(oldQuery: Object, newQuery: Object): Object {
+    const result = {}
+
+    const keys = Object.keys(oldQuery).concat(Object.keys(newQuery))
+    for (let i = 0, l = keys.length; i < l; i++) {
+        const k = keys[i]
+        const newValue = newQuery[k]
+        if (newValue !== null) {
+            result[k] = newValue === undefined ? oldQuery[k] : newValue
+        }
+    }
+
+    return result
+}
+
 export default class Route {
     page: ?string
     name: string
@@ -37,7 +52,8 @@ export default class Route {
                 ? this
                 : new Route({
                     ...this,
-                    ...rec
+                    ...rec,
+                    query: mergeQuery(this.query, rec.query || {})
                 })
     }
 }

@@ -15,6 +15,10 @@ export type {
     IRouterConfig
 } from './interfaces'
 
+export type {
+    IRouteOpts
+} from './Route'
+
 export {
     SusaninRouter,
     Route,
