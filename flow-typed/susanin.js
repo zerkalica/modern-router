@@ -20,6 +20,7 @@ interface SusaninRoute<Data: Object, Params: Object> {
 }
 
 interface Susanin {
+    constructor(): Susanin;
     addRoute(rec: SusaninRec): void;
     getRouteByName(name: string): ?SusaninRoute<*, *>;
     findFirst<Query: Object>(path: string, params?: SimpleMap<string, *>): ?[SusaninRoute<*, *>, Query];

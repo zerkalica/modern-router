@@ -144,7 +144,7 @@ export interface RouteData {
 export interface Router {
     find(options: LocationData): Route;
     build(name: string, params?: QueryMap): string;
-    getRouteByName(name: string): ?Route;
+    getRouteByName(name: string, query?: ?Object): ?Route;
 }
 
 export type GetKey = (params: LocationData) => string

@@ -104,6 +104,11 @@ export default class RouterManager {
         return this._currentRoute
     }
 
+    get(): Route {
+        this._currentRoute = this._router.find(this._location.getParams())
+        return this._currentRoute
+    }
+
     /**
      * Invoke callback on location changes
      */
