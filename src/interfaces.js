@@ -56,6 +56,9 @@ export type RouteConfig = {
       */
     isFull?: boolean;
 
+    isExternal?: boolean;
+
+
      /**
       * On client do location.replaceState or location.pushState
       */

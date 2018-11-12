@@ -104,7 +104,7 @@ export default class SusaninRouter implements Router {
             method: config.method || dl.method
         }
 
-        const isExternal: boolean = !!(config.port || config.hostname || config.protocol)
+        const isExternal: boolean = config.isExternal === undefined ? !!(config.port || config.hostname || config.protocol) : config.isExternal
 
         const data: RouteSusaninData = {
             page: config.page || name,

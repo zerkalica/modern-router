@@ -70,6 +70,7 @@ export default class BrowserLocation extends AbstractLocation {
     }
 
     onChange(fn: LocationCallback): () => void {
+        fn(this.getParams());
         return this._callbacks.onChange(fn)
     }
 
