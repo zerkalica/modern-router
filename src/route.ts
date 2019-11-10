@@ -5,7 +5,7 @@ export function route<Params, Data, Defaults extends Partial<Params>>(
     validate: Validator<Params>,
     config: Omit<RouteConfig<Params, Data, Defaults>, 'validate'>
 ): RouteConfig<Params, Data, Defaults> {
-    return {...config, validate}
+    return { ...config, validate }
 }
 
 /**
@@ -29,7 +29,9 @@ export function route<Params, Data, Defaults extends Partial<Params>>(
  * })
  * ```
  **/
-function config<Config extends AllRoutesConfig>(config: Config): Config {
+function config<Config>(
+    config: AllRoutesConfig<Config>
+): AllRoutesConfig<Config> {
     return config
 }
 

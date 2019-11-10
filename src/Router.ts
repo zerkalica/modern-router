@@ -26,7 +26,7 @@ export class PageNotFoundError extends Error {
     }
 }
 
-export interface RouterOptions<Config extends AllRoutesConfig, Context> extends LocationStoreOptions {
+export interface RouterOptions<Config extends AllRoutesConfig, Context = unknown> extends LocationStoreOptions {
     routerConfig: Config
     context: Context
 }
@@ -39,7 +39,7 @@ const defaultLocation: LocationLike = {
     hostname: '',
 }
 
-export abstract class Router<Config extends AllRoutesConfig, Context> {
+export abstract class Router<Config extends AllRoutesConfig, Context = unknown> {
     protected location: LocationLike
     protected refresh: () => void
     protected history?: HistoryLike

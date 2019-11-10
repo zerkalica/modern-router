@@ -9,11 +9,10 @@ describe('RouterSusanin', () => {
             {
                 pattern: p => `/${p.region}`,
             }
-        ),
+        )
     })
 
     it('simple', () => {
-
         const routes = routerSusanin({
             location: {
                 search: '',
@@ -25,6 +24,9 @@ describe('RouterSusanin', () => {
             context: {},
             routerConfig: routeConfig,
         })
-        routes.search.url({})
+
+        routes.search.url({
+
+        })
     })
 })

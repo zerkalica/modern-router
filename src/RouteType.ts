@@ -21,14 +21,14 @@ export type RouteConfig<
     preBuild?: (p: Params, context: Context) => Raw
 }
 
-export type AllRoutesConfig<K extends {} = any> = {
-    [P in keyof K]: P extends string ? (K[P] extends RouteConfig ? K[P] : never) : never
+export type AllRoutesConfig<K = any> = {
+    [P in keyof K]: P extends 'current' ? never : K[P] extends RouteConfig ? K[P] : never
 }
 
 export interface Route<
     Params = any,
     Data = any,
-    Defaults extends Partial<Params> = any,
+    Defaults extends Partial<Params> = Params,
     Name extends string = string
 > {
     readonly name: Name
@@ -47,10 +47,10 @@ export type RouteConfigToRoute<Config, Name extends string> = Config extends Rou
     ? Route<Params, Data, Defaults, Name>
     : never
 
-export type AllRoutes<Config extends AllRoutesConfig> = {
+export type AllRoutes<Config> = {
     [Name in keyof Config]: Name extends string
         ? (Config[Name] extends RouteConfig ? RouteConfigToRoute<Config[Name], Name> : never)
         : never
 } & { current: CurrentRoute<Config> }
 
-export type CurrentRoute<Config> = Omit<UnionOf<AllRoutes<Config>>, 'params'>
+export type CurrentRoute<Config> = Omit<UnionOf<Omit<AllRoutes<Config>, 'current'>>, 'params'>
