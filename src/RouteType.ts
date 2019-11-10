@@ -1,10 +1,22 @@
-import { Tokens, Validator } from './schema'
+import { Validator } from './schema'
 
 export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> & Defaults
 
 type UnionOf<T> = T[keyof T]
 
-export type RawParams<Params> = Record<keyof Params, string | string[]>
+type Primitive = string | number | boolean | symbol | undefined
+
+export type RawParams<Params> = {
+    [P in keyof Params]: Params[P] extends Primitive
+        ? string
+        : (Params[P] extends Primitive[] ? string[] : RawParams<Params[P]>)
+}
+
+export type Tokens<Params> = {
+    [P in keyof Params]-?: Params[P] extends Primitive
+        ? string
+        : (Params[P] extends any[] ? never : Tokens<Params[P]>)
+}
 
 export type RouteConfig<
     Params = any,
@@ -22,7 +34,7 @@ export type RouteConfig<
 }
 
 export type AllRoutesConfig<K = any> = {
-    [P in keyof K]: P extends 'current' ? never : K[P] extends RouteConfig ? K[P] : never
+    [P in keyof K]: P extends 'current' ? never : (K[P] extends RouteConfig ? K[P] : never)
 }
 
 export interface Route<

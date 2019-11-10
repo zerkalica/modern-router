@@ -4,14 +4,21 @@ import Susanin, { Route as SusaninRouteRaw, SusaninRouteConfig } from 'susanin'
 import { PageNotFoundError, Router, RouterOptions } from '../Router'
 import { AllRoutesConfig, Route, RouteConfig, CurrentRoute } from '../RouteType'
 import { RouteSusanin } from './RouteSusanin'
-import { getTokens } from '../schema'
+import { getTokens } from './getTokens'
 
-class RouterSusanin<C extends AllRoutesConfig, Context> extends Router<C, Context> {
+class RouterSusanin<Config extends AllRoutesConfig, Context> extends Router<Config, Context> {
     protected susanin = new Susanin()
     protected facades = new WeakMap<SusaninRouteRaw, Route>()
 
     protected createRoute<Params, Data, Defaults, Name extends string>(
-        { data, defaults, pattern, postMatch, preBuild, validate }: RouteConfig<Params, Data, Defaults, Context>,
+        {
+            data,
+            defaults,
+            pattern,
+            postMatch,
+            preBuild,
+            validate,
+        }: RouteConfig<Params, Data, Defaults, Context>,
         name: Name
     ): Route<Params, Data, Defaults, Name> {
         const susaninRouteConfig: SusaninRouteConfig<Params, Data, Defaults, Name> = {
@@ -32,14 +39,14 @@ class RouterSusanin<C extends AllRoutesConfig, Context> extends Router<C, Contex
         return facade
     }
 
-    protected current(): CurrentRoute<C> {
+    protected current(): CurrentRoute<Config> {
         const rec = this.susanin.findFirst(this.currentUrl)
         if (!rec) throw new PageNotFoundError(this.currentUrl)
         const [route] = rec
         const facade = this.facades.get(route)
         if (!facade) throw new PageNotFoundError(this.currentUrl)
 
-        return (facade as unknown) as CurrentRoute<C>
+        return (facade as unknown) as CurrentRoute<Config>
     }
 }
 

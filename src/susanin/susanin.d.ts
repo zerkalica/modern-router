@@ -1,7 +1,13 @@
 declare module 'susanin' {
     export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> & Defaults
-    export type RawParams<Params> = Record<keyof Params, string | string[]>
+    type Primitive = string | number | boolean | symbol | undefined
 
+    export type RawParams<Params> = {
+        [P in keyof Params]: Params[P] extends Primitive
+            ? string
+            : (Params[P] extends Primitive[] ? string[] : RawParams<Params[P]>)
+    }
+    
     export interface SusaninRouteConfig<
         Params = any,
         Data = any,

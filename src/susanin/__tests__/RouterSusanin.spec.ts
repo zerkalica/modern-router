@@ -1,25 +1,28 @@
 import { routerSusanin, route, s } from '../..'
 
 describe('RouterSusanin', () => {
-    const routeConfig = route.config({
+    const routerConfig = route.config({
         search: route(
             s.rec({
-                region: s.opt(s.num),
-                id: s.num,
+                region: s.opt(s.str),
+                stationId: s.num,
             }),
             {
-                pattern: p => `/${p.region}/${p.id}`,
+                pattern: p => `/${p.region}/${p.stationId}`,
+                postMatch(raw) {
+                    return {
+                        stationId: Number(raw.stationId),
+                        region: raw.region,
+                    }
+                },
+                preBuild(params) {
+                    return {
+                        stationId: String(params.stationId),
+                        region: params.region,
+                    }
+                },
             }
         ),
-        offer: route(
-            s.rec({
-                region: s.opt(s.num),
-                id: s.num,
-            }),
-            {
-                pattern: p => `/offer/${p.id}`,
-            }
-        )
     })
 
     it('simple', () => {
@@ -29,16 +32,14 @@ describe('RouterSusanin', () => {
                 origin: '',
                 port: '80',
                 hostname: 'example.com',
-                pathname: '/',
+                pathname: '/1/2',
             },
             context: {},
-            routerConfig: routeConfig,
+            routerConfig,
         })
-        routes.current.name
 
-        routes.search.url({
-            region: 1,
-            id: 1
-        })
+        const current = routes.current
+        expect(current.name).toEqual('search')
+        expect(routes.search.url({ stationId: 1, region: 'moscow' })).toEqual('/moscow/1')
     })
 })

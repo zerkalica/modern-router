@@ -20,20 +20,6 @@ function failHidden(error: any): never {
     throw error /// Use 'Never Pause Here' breakpoint in DevTools or simply blackbox this script
 }
 
-function tokenFromKey(key: string): string {
-    return `<${key}>`
-}
-
-function createTokens<Sub extends Record<string, any>>(sub: Sub): Tokens<Sub> {
-    const tokens = {} as Tokens<Sub>
-    for (const field in sub) {
-        const tokens = sub[field].tokens
-        tokens[field] = tokens || tokenFromKey(field)
-    }
-
-    return tokens
-}
-
 function record<Sub extends Record<string, any>>(sub: Sub) {
     type Input = PartialUpper<
         {
@@ -60,12 +46,12 @@ function record<Sub extends Record<string, any>>(sub: Sub) {
 
         return res as Readonly<Output>
     }
-    fn.tokens = createTokens(sub)
+    fn.metadata = sub
 
     return fn
 }
 
-function array<Sub extends value>(sub: Sub) {
+function array<Sub extends Value>(sub: Sub) {
     return (val: readonly Parameters<Sub>[0][]) => {
         if (!Array.isArray(val)) return fail(new Error('is not an array'))
 
@@ -97,23 +83,14 @@ function string(val: string) {
     return fail(new Error('is not a string'))
 }
 
-type value<Input = any, Output = any> = ((val: Input) => Output) & { tokens?: Tokens<Output> }
+type Metadata = Record<string, any>
 
-function createTokensFromVariant<Sub extends value[], Out>(sub: Sub) {
-    const tokens = {} as Record<string, any>
-    for (const type of sub) {
-        const typeTokens = type.tokens
-        if (!typeTokens) continue
-        for (const childKey in typeTokens) {
-            tokens[childKey] = typeTokens[childKey]
-        }
-    }
+type Value<Input = any, Output = any> = ((val: Input) => Output) & { metadata?: Metadata }
 
-    return tokens as Tokens<Out>
-}
-
-function variant<Sub extends value[]>(...sub: Sub) {
-    const fn = (val: Parameters<Sub[number]>[0]) => {
+function variant<Sub extends Value[]>(...sub: Sub) {
+    const fn: Value<Parameters<Sub[number]>[0], ReturnType<Sub[number]>> = (
+        val: Parameters<Sub[number]>[0]
+    ) => {
         const errors = [] as String[]
 
         for (const type of sub) {
@@ -126,11 +103,22 @@ function variant<Sub extends value[]>(...sub: Sub) {
 
         return fail(new Error(errors.join(' and ')))
     }
-    fn.tokens = createTokensFromVariant(sub)
+    let metadata = {} as Metadata
+    let hasMetadata = false
+    for (const item of sub) {
+        if (item.metadata) {
+            hasMetadata = true
+            metadata = { ...fn.metadata, ...item.metadata }
+        }
+    }
+    if (hasMetadata) {
+        fn.metadata = metadata
+    }
+
     return fn
 }
 
-function optional<Sub extends value>(sub: Sub) {
+function optional<Sub extends Value>(sub: Sub) {
     return (val: Parameters<Sub>[0] | undefined) => {
         if (val === undefined) return undefined
 
@@ -148,23 +136,4 @@ export const s = {
     rec: record,
 } as const
 
-export type Validator<Params> = (p: Params) => Readonly<Params>
-
-type Primitive = string | number | boolean | symbol | undefined
-
-export type Tokens<Params> = {
-    [P in keyof Params]-?: Params[P] extends Primitive
-        ? string
-        : Params[P] extends any[]
-        ? Params[P]
-        : Tokens<Params[P]>
-}
-
-export type ParamsType<Params extends Record<string, any>> = ((val: Params) => Readonly<Params>) & {
-    tokens?: Tokens<Params>
-}
-
-export function getTokens<Params>(schema: ParamsType<Params>): Tokens<Params> {
-    if (!schema.tokens) throw new Error(`${schema} has no tokens`)
-    return schema.tokens
-}
+export type Validator<Params> = Value<Params, Readonly<Params>>

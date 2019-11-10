@@ -12,18 +12,20 @@ export function route<Params, Data, Defaults extends Partial<Params> | undefined
  *
  * ```ts
  * const r = route.config({
- *    search: route({
- *        schema: {
- *            controller: schema.num,
- *            action: schema.opt(schema.num),
- *            id: schema.str,
- *        },
+ *    search: route(
+ *    s.rec({
+ *        controller: s.num,
+ *        action: s.opt(s.num),
+ *        id: s.str,
+ *    }),
+ *    {
  *        pattern: p => `/${p.action}/${p.id}/qwe`,
  *    }),
- *    offer: route({
- *        schema: {
- *            id: schema.str,
- *        },
+ *    offer: route(
+ *    s.rec({
+ *        id: s.str,
+ *    }),
+ *    {
  *        pattern: p => `/offer/${p.id}`,
  *    }),
  * })

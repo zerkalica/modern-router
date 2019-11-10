@@ -22,7 +22,7 @@ export interface LocationStoreOptions {
 
 export class PageNotFoundError extends Error {
     constructor(url: string) {
-        super(`Page not found for "${url}"`)
+        super(`Route not found for url "${url}"`)
     }
 }
 
