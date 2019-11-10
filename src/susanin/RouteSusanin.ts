@@ -7,7 +7,7 @@ export class RouteSusanin<
     Context,
     Params,
     Data,
-    Defaults extends Partial<Params>,
+    Defaults,
     Name extends string
 > implements Route<Params, Data, Defaults, Name> {
     protected susaninRoute: RouteSusaninRaw<Params, Data, Defaults, Name>

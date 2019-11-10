@@ -5,9 +5,19 @@ describe('RouterSusanin', () => {
         search: route(
             s.rec({
                 region: s.opt(s.num),
+                id: s.num,
             }),
             {
-                pattern: p => `/${p.region}`,
+                pattern: p => `/${p.region}/${p.id}`,
+            }
+        ),
+        offer: route(
+            s.rec({
+                region: s.opt(s.num),
+                id: s.num,
+            }),
+            {
+                pattern: p => `/offer/${p.id}`,
             }
         )
     })
@@ -24,9 +34,11 @@ describe('RouterSusanin', () => {
             context: {},
             routerConfig: routeConfig,
         })
+        routes.current.name
 
         routes.search.url({
-
+            region: 1,
+            id: 1
         })
     })
 })

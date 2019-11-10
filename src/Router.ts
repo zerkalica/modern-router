@@ -26,7 +26,7 @@ export class PageNotFoundError extends Error {
     }
 }
 
-export interface RouterOptions<Config extends AllRoutesConfig, Context = unknown> extends LocationStoreOptions {
+export interface RouterOptions<Config extends AllRoutesConfig, Context> extends LocationStoreOptions {
     routerConfig: Config
     context: Context
 }
@@ -87,7 +87,7 @@ export abstract class Router<Config extends AllRoutesConfig, Context = unknown> 
         return this._routes
     }
 
-    protected abstract createRoute<Params, Data, Defaults extends Partial<Params>, Name extends string>(
+    protected abstract createRoute<Params, Data, Defaults, Name extends string>(
         config: RouteConfig<Params, Data, Defaults, Context>,
         name: Name
     ): Route<Params, Data, Defaults, Name>
