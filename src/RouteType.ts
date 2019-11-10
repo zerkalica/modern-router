@@ -10,22 +10,27 @@ export type RouteConfig<
     Params = any,
     Data = any,
     Defaults extends Partial<Params> | undefined = any,
-    Context = any,
-    Raw extends RawParams<Params> = RawParams<Params>
+    Context = any
+    // Raw extends RawParams<Params> = RawParams<Params>
 > = {
     readonly validate: Validator<Params>
     readonly defaults?: Defaults
     readonly data?: Data
     pattern(p: Tokens<Params>): string
-    postMatch?: (p: Raw, context: Context) => Params
-    preBuild?: (p: Params, context: Context) => Raw
+    postMatch?: (p: RawParams<Params>, context: Context) => Params
+    preBuild?: (p: Params, context: Context) => RawParams<Params>
 }
 
 export type AllRoutesConfig<K = any> = {
     [P in keyof K]: P extends 'current' ? never : K[P] extends RouteConfig ? K[P] : never
 }
 
-export interface Route<Params = any, Data = any, Defaults extends Partial<Params> | undefined = undefined, Name = any> {
+export interface Route<
+    Params = any,
+    Data = any,
+    Defaults extends Partial<Params> | undefined = undefined,
+    Name = any
+> {
     readonly name: Name
     readonly params: Params
 

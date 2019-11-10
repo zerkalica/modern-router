@@ -10,7 +10,7 @@ class RouterSusanin<C extends AllRoutesConfig, Context> extends Router<C, Contex
     protected susanin = new Susanin()
     protected facades = new WeakMap<SusaninRouteRaw, Route>()
 
-    protected createRoute<Params, Data, Defaults, Name extends string = string>(
+    protected createRoute<Params, Data, Defaults, Name extends string>(
         { data, defaults, pattern, postMatch, preBuild, validate }: RouteConfig<Params, Data, Defaults, Context>,
         name: Name
     ): Route<Params, Data, Defaults, Name> {

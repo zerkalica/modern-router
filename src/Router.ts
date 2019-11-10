@@ -39,7 +39,7 @@ const defaultLocation: LocationLike = {
     hostname: '',
 }
 
-export abstract class Router<Config extends AllRoutesConfig, Context = unknown> {
+export abstract class Router<Config extends AllRoutesConfig, Context> {
     protected location: LocationLike
     protected refresh: () => void
     protected history?: HistoryLike
