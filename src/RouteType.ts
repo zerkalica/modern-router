@@ -19,19 +19,20 @@ export type Tokens<Params> = {
 }
 
 export type RouteConfig<
-    Params = any,
+    Input = any,
+    Output = any,
     Data = any,
-    Defaults extends Partial<Params> | undefined = any,
-    Context = any
-    // Raw extends RawParams<Params> = RawParams<Params>
+    Defaults extends Partial<Output> | undefined = any,
+    Context = any,
 > = {
-    readonly validate: Validator<Params>
+    readonly input: Validator<Input>
+    // readonly output: Validator<Output>
     readonly defaults?: Defaults
     readonly data?: Data
-    readonly conditions?: Partial<Record<keyof Params, string | string[]>>
-    pattern(p: Tokens<Params>): string
-    postMatch?: (p: RawParams<Params>, context: Context) => Params
-    preBuild?: (p: Params, context: Context) => RawParams<Params>
+    readonly conditions?: Partial<Record<keyof Input, string | string[]>>
+    pattern(p: Tokens<Input>): string
+    postMatch: (p: Input, context: Context) => Output
+    preBuild: (p: Output, context: Context) => Input
 }
 
 export type AllRoutesConfig<K = any> = {
@@ -39,17 +40,17 @@ export type AllRoutesConfig<K = any> = {
 }
 
 export interface Route<
-    Params = any,
+    Output = any,
     Data = any,
-    Defaults extends Partial<Params> | undefined = undefined,
+    Defaults extends Partial<Output> | undefined = undefined,
     Name = any
 > {
     readonly name: Name
-    readonly params: Params
+    readonly params: Output
 
-    push(params: PartialDefaults<Params, Defaults>): void
-    replace(params: PartialDefaults<Params, Defaults>): void
-    url(params: PartialDefaults<Params, Defaults>): string
+    push(params: PartialDefaults<Output, Defaults>): void
+    replace(params: PartialDefaults<Output, Defaults>): void
+    url(params: PartialDefaults<Output, Defaults>): string
 }
 
 export type RouteConfigToRoute<Config, Name extends string> = Config extends RouteConfig<

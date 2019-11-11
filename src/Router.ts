@@ -6,10 +6,10 @@ export interface HistoryLike {
 }
 
 export interface LocationLike {
-    search: string
-    origin: string
+    search?: string
+    origin?: string
+    port?: string
     pathname: string
-    port: string
     hostname: string
 }
 
@@ -31,16 +31,16 @@ export interface RouterOptions<Config extends AllRoutesConfig, Context> extends 
     context: Context
 }
 
-const defaultLocation: LocationLike = {
+const defaultLocation: Required<LocationLike> = {
     search: '',
     origin: '',
     pathname: '',
-    port: '',
+    port: '80',
     hostname: '',
 }
 
 export abstract class Router<Config extends AllRoutesConfig, Context> {
-    protected location: LocationLike
+    protected location: Required<LocationLike>
     protected refresh: () => void
     protected history?: HistoryLike
     protected target?: Window
@@ -55,7 +55,7 @@ export abstract class Router<Config extends AllRoutesConfig, Context> {
         routerConfig,
         context,
     }: RouterOptions<Config, Context>) {
-        this.location = location
+        this.location = {...defaultLocation, ...location}
         this.refresh = refresh
         this.history = history
         this.target = target
@@ -87,10 +87,10 @@ export abstract class Router<Config extends AllRoutesConfig, Context> {
         return this._routes
     }
 
-    protected abstract createRoute<Params, Data, Defaults, Name extends string>(
-        config: RouteConfig<Params, Data, Defaults, Context>,
+    protected abstract createRoute<Input, Output, Data, Defaults, Name extends string>(
+        config: RouteConfig<Input, Output, Data, Defaults, Context>,
         name: Name
-    ): Route<Params, Data, Defaults, Name>
+    ): Route<Output, Data, Defaults, Name>
 
     destructor() {
         const target = this.target

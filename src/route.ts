@@ -1,11 +1,17 @@
 import { RouteConfig, AllRoutesConfig } from './RouteType'
 import { Validator } from './schema'
 
-export function route<Context, Params = any, Data = any, Defaults extends Partial<Params> | undefined = any>(
-    validate: Validator<Params>,
-    config: Omit<RouteConfig<Params, Data, Defaults, Context>, 'validate'>
-): RouteConfig<Params, Data, Defaults, Context> {
-    return { ...config, validate }
+export function route<
+    Context,
+    Input = any,
+    Output = any,
+    Data = any,
+    Defaults extends Partial<Output> | undefined = any
+>(
+    input: Validator<Input>,
+    config: Omit<RouteConfig<Input, Output, Data, Defaults, Context>, 'input' | 'output'>
+): RouteConfig<Input, Output, Data, Defaults, Context> {
+    return {...config, input}
 }
 
 /**
@@ -31,9 +37,7 @@ export function route<Context, Params = any, Data = any, Defaults extends Partia
  * })
  * ```
  **/
-function config<Config>(
-    config: AllRoutesConfig<Config>
-): AllRoutesConfig<Config> {
+function config<Config>(config: AllRoutesConfig<Config>): AllRoutesConfig<Config> {
     return config
 }
 

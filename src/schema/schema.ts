@@ -77,6 +77,12 @@ function boolean(val: boolean) {
     return fail(new Error('is not a boolean'))
 }
 
+function undef(val: undefined) {
+    if (val === undefined) return val
+
+    return fail(new Error('is not a undefined'))
+}
+
 function string(val: string) {
     if (typeof val === 'string') return val
 
@@ -91,7 +97,7 @@ function variant<Sub extends Value[]>(...sub: Sub) {
     const fn: Value<Parameters<Sub[number]>[0], ReturnType<Sub[number]>> = (
         val: Parameters<Sub[number]>[0]
     ) => {
-        const errors = [] as String[]
+        const errors = [] as string[]
 
         for (const type of sub) {
             try {
@@ -126,6 +132,14 @@ function optional<Sub extends Value>(sub: Sub) {
     }
 }
 
+function wrapper<Pre extends Value, Obj extends { new (val: ReturnType<Pre>): any }>(pre: Pre, Obj: Obj) {
+    return (val: Parameters<Pre>[0]) => new Obj(pre(val)) as InstanceType<Obj>
+}
+
+function tag<In, Out, Tag extends string>(tag: Tag, sub: Value<In, Out>) {
+    return (value: In) => ({ t: tag, v: sub(value) })
+}
+
 export const s = {
     str: string,
     bool: boolean,
@@ -134,6 +148,9 @@ export const s = {
     opt: optional,
     arr: array,
     rec: record,
+    undef,
+    tag,
+    wrapper,
 } as const
 
-export type Validator<Params> = Value<Params, Readonly<Params>>
+export type Validator<Params> = Value<any, Params>

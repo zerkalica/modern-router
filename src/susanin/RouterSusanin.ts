@@ -10,27 +10,25 @@ class RouterSusanin<Config extends AllRoutesConfig, Context> extends Router<Conf
     protected susanin = new Susanin()
     protected facades = new WeakMap<SusaninRouteRaw, Route>()
 
-    protected createRoute<Params, Data, Defaults, Name extends string>(
+    protected createRoute<Input, Output, Data, Defaults, Name extends string>(
         {
             data,
             defaults,
             pattern,
             postMatch,
             preBuild,
-            validate,
             conditions,
-        }: RouteConfig<Params, Data, Defaults, Context>,
+            input,
+        }: RouteConfig<Input, Output, Data, Defaults, Context>,
         name: Name
-    ): Route<Params, Data, Defaults, Name> {
-        const susaninRouteConfig: SusaninRouteConfig<Params, Data, Defaults, Name> = {
-            postMatch: postMatch
-                ? raw => validate(postMatch(raw, this.context))
-                : raw => validate((raw as unknown) as Params),
-            preBuild: preBuild ? params => preBuild(params, this.context) : undefined,
+    ): Route<Output, Data, Defaults, Name> {
+        const susaninRouteConfig: SusaninRouteConfig<Input, Output, Data, Defaults, Name> = {
+            postMatch: raw => postMatch(input(raw), this.context),
+            preBuild: params => preBuild(params, this.context),
             data,
             defaults,
             conditions,
-            pattern: pattern(getTokens(validate)),
+            pattern: pattern(getTokens(input)),
             name,
         }
 

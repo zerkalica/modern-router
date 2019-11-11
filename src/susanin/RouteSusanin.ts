@@ -5,15 +5,15 @@ import { Route, PartialDefaults, AllRoutesConfig } from '../RouteType'
 export class RouteSusanin<
     Config extends AllRoutesConfig,
     Context,
-    Params,
+    Output,
     Data,
     Defaults,
     Name extends string
-> implements Route<Params, Data, Defaults, Name> {
-    protected susaninRoute: RouteSusaninRaw<Params, Data, Defaults, Name>
+> implements Route<Output, Data, Defaults, Name> {
+    protected susaninRoute: RouteSusaninRaw<Output, Data, Defaults, Name>
     protected router: Router<Config, Context>
 
-    constructor(route: RouteSusaninRaw<Params, Data, Defaults, Name>, router: Router<Config, Context>) {
+    constructor(route: RouteSusaninRaw<Output, Data, Defaults, Name>, router: Router<Config, Context>) {
         this.susaninRoute = route
         this.router = router
     }
@@ -26,7 +26,7 @@ export class RouteSusanin<
         return this.susaninRoute.getName()
     }
 
-    get params(): Params {
+    get params(): Output {
         const { currentUrl, routes } = this.router
         const params = this.susaninRoute.match(currentUrl)
         if (!params)
@@ -37,15 +37,15 @@ export class RouteSusanin<
         return params
     }
 
-    push(params: PartialDefaults<Params, Defaults>) {
+    push(params: PartialDefaults<Output, Defaults>) {
         this.router.update(this.susaninRoute.build(params))
     }
 
-    replace(params: PartialDefaults<Params, Defaults>) {
+    replace(params: PartialDefaults<Output, Defaults>) {
         this.router.update(this.susaninRoute.build(params), true)
     }
 
-    url(params: PartialDefaults<Params, Defaults>): string {
+    url(params: PartialDefaults<Output, Defaults>): string {
         return this.susaninRoute.build(params)
     }
 }

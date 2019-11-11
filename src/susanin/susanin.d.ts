@@ -9,9 +9,10 @@ declare module 'susanin' {
     }
     
     export interface SusaninRouteConfig<
-        Params = any,
+        Input = any,
+        Output = any,
         Data = any,
-        Defaults extends Partial<Params> | undefined = any,
+        Defaults extends Partial<Output> | undefined = any,
         Name extends string = string,
         // Raw extends Record<keyof Params, string | string[]> = Record<keyof Params, string | string[]>
     > {
@@ -19,39 +20,39 @@ declare module 'susanin' {
         readonly pattern: string
         readonly defaults?: Defaults
         readonly data?: Data
-        readonly conditions?: Partial<Record<keyof Params, string | string[]>>
-        readonly postMatch?: (p: RawParams<Params>) => Params
-        readonly preBuild?: (p: Params) => RawParams<Params>
+        readonly conditions?: Partial<Record<keyof Input, string | string[]>>
+        readonly postMatch?: (p: Input) => Output
+        readonly preBuild?: (p: Output) => Input
     }
 
     export class Route<
-        Params = any,
+        Output = any,
         Data = any,
-        Defaults extends Partial<Params> | undefined = any,
+        Defaults extends Partial<Output> | undefined = any,
         Name extends string = string
     > {
-        match(url: string, data?: Partial<Data>): Params | null
+        match(url: string, data?: Partial<Data>): Output | null
         getName(): Name
         getData(): Data
-        build(params: PartialDefaults<Params, Defaults>): string
+        build(params: PartialDefaults<Output, Defaults>): string
     }
 
     export type RouteWithParams<
-        Params,
+        Output,
         Data,
-        Defaults extends Partial<Params> | undefined,
+        Defaults extends Partial<Output> | undefined,
         Name extends string
-    > = [Route<Params, Data, Defaults, Name>, Params]
+    > = [Route<Output, Data, Defaults, Name>, Output]
 
     class Susanin {
-        addRoute<Params, Data, Defaults extends Partial<Params> | undefined, Name extends string>(
-            config: SusaninRouteConfig<Params, Data, Defaults, Name>
-        ): Route<Params, Data, Defaults, Name>
+        addRoute<Input, Output, Data, Defaults extends Partial<Output> | undefined, Name extends string>(
+            config: SusaninRouteConfig<Input, Output, Data, Defaults, Name>
+        ): Route<Output, Data, Defaults, Name>
 
-        findFirst<Params, Data, Defaults extends Partial<Params> | undefined, Name extends string>(
+        findFirst<Output, Data, Defaults extends Partial<Output> | undefined, Name extends string>(
             url: string,
             data?: Partial<Data>
-        ): RouteWithParams<Params, Data, Defaults, Name> | null
+        ): RouteWithParams<Output, Data, Defaults, Name> | null
     }
 
     export default Susanin
