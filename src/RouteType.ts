@@ -28,6 +28,7 @@ export type RouteConfig<
     readonly validate: Validator<Params>
     readonly defaults?: Defaults
     readonly data?: Data
+    readonly conditions?: Partial<Record<keyof Params, string | string[]>>
     pattern(p: Tokens<Params>): string
     postMatch?: (p: RawParams<Params>, context: Context) => Params
     preBuild?: (p: Params, context: Context) => RawParams<Params>
@@ -61,8 +62,14 @@ export type RouteConfigToRoute<Config, Name extends string> = Config extends Rou
 
 export type AllRoutes<Config> = {
     [Name in keyof Config]: Name extends string
-        ? (Config[Name] extends RouteConfig ? RouteConfigToRoute<Config[Name], Name> : never)
+        ? (Config[Name] extends RouteConfig ? Omit<RouteConfigToRoute<Config[Name], Name>, 'params'> : never)
         : never
 } & { current: CurrentRoute<Config> }
 
-export type CurrentRoute<Config> = Omit<UnionOf<Omit<AllRoutes<Config>, 'current'>>, 'params'>
+export type AllRoutesS<Config> = {
+    [Name in keyof Config]: Name extends string
+        ? (Config[Name] extends RouteConfig ? RouteConfigToRoute<Config[Name], Name> : never)
+        : never
+}
+
+export type CurrentRoute<Config> = UnionOf<AllRoutesS<Config>>

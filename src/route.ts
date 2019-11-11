@@ -1,10 +1,10 @@
 import { RouteConfig, AllRoutesConfig } from './RouteType'
 import { Validator } from './schema'
 
-export function route<Params, Data, Defaults extends Partial<Params> | undefined>(
+export function route<Context, Params = any, Data = any, Defaults extends Partial<Params> | undefined = any>(
     validate: Validator<Params>,
-    config: Omit<RouteConfig<Params, Data, Defaults>, 'validate'>
-): RouteConfig<Params, Data, Defaults> {
+    config: Omit<RouteConfig<Params, Data, Defaults, Context>, 'validate'>
+): RouteConfig<Params, Data, Defaults, Context> {
     return { ...config, validate }
 }
 

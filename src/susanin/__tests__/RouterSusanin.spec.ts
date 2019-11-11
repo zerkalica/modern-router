@@ -8,7 +8,8 @@ describe('RouterSusanin', () => {
                 stationId: s.num,
             }),
             {
-                pattern: p => `/${p.region}/${p.stationId}`,
+                conditions: {region: '1'},
+                pattern: p => `/region(/${p.region})/${p.stationId}`,
                 postMatch(raw) {
                     return {
                         stationId: Number(raw.stationId),
@@ -37,9 +38,13 @@ describe('RouterSusanin', () => {
             context: {},
             routerConfig,
         })
-
+ 
         const current = routes.current
         expect(current.name).toEqual('search')
+        expect(current.params).toEqual({
+            region: '1',
+            stationId: 2
+        })
         expect(routes.search.url({ stationId: 1, region: 'moscow' })).toEqual('/moscow/1')
     })
 })

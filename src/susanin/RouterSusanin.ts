@@ -18,6 +18,7 @@ class RouterSusanin<Config extends AllRoutesConfig, Context> extends Router<Conf
             postMatch,
             preBuild,
             validate,
+            conditions,
         }: RouteConfig<Params, Data, Defaults, Context>,
         name: Name
     ): Route<Params, Data, Defaults, Name> {
@@ -28,6 +29,7 @@ class RouterSusanin<Config extends AllRoutesConfig, Context> extends Router<Conf
             preBuild: preBuild ? params => preBuild(params, this.context) : undefined,
             data,
             defaults,
+            conditions,
             pattern: pattern(getTokens(validate)),
             name,
         }
