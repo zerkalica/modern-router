@@ -2,7 +2,7 @@
 import Susanin, { Route as SusaninRouteRaw, SusaninRouteConfig } from 'susanin'
 
 import { PageNotFoundError, Router, RouterOptions } from '../Router'
-import { AllRoutesConfig, Route, RouteConfig, CurrentRoute } from '../RouteType'
+import { AllRoutesConfig, Route, RouteConfig, CurrentRoute } from '../RouterInterfaces'
 import { RouteSusanin } from './RouteSusanin'
 import { getTokens } from './getTokens'
 
@@ -15,20 +15,19 @@ class RouterSusanin<Config extends AllRoutesConfig, Context> extends Router<Conf
             data,
             defaults,
             pattern,
-            postMatch,
-            preBuild,
+            fromQuery,
+            toQuery,
             conditions,
-            input,
-        }: RouteConfig<Input, Output, Data, Defaults, Context>,
+        }: RouteConfig<Input, Output, Data, Defaults>,
         name: Name
     ): Route<Output, Data, Defaults, Name> {
         const susaninRouteConfig: SusaninRouteConfig<Input, Output, Data, Defaults, Name> = {
-            postMatch: raw => postMatch(input(raw), this.context),
-            preBuild: params => preBuild(params, this.context),
+            postMatch: raw => fromQuery(raw),
+            preBuild: params => toQuery(params),
             data,
             defaults,
             conditions,
-            pattern: pattern(getTokens(input)),
+            pattern: pattern(getTokens(fromQuery)),
             name,
         }
 

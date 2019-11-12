@@ -20,7 +20,9 @@ function failHidden(error: any): never {
     throw error /// Use 'Never Pause Here' breakpoint in DevTools or simply blackbox this script
 }
 
-function record<Sub extends Record<string, any>>(sub: Sub) {
+export type RecMetadata = {metadata: Record<string, any>}
+
+function Rec<Sub extends Record<string, any>>(sub: Sub) {
     type Input = PartialUpper<
         {
             [key in keyof Sub]: Parameters<Sub[key]>[0]
@@ -46,12 +48,12 @@ function record<Sub extends Record<string, any>>(sub: Sub) {
 
         return res as Readonly<Output>
     }
-    fn.metadata = sub
+    fn.metadata = sub as Record<string, any>
 
     return fn
 }
 
-function array<Sub extends Value>(sub: Sub) {
+function List<Sub extends Value>(sub: Sub) {
     return (val: readonly Parameters<Sub>[0][]) => {
         if (!Array.isArray(val)) return fail(new Error('is not an array'))
 
@@ -65,25 +67,25 @@ function array<Sub extends Value>(sub: Sub) {
     }
 }
 
-function number(val: number) {
+function Num(val: number) {
     if (typeof val === 'number') return val
 
     return fail(new Error('is not a number'))
 }
 
-function boolean(val: boolean) {
+function Bool(val: boolean) {
     if (typeof val === 'boolean') return val
 
     return fail(new Error('is not a boolean'))
 }
 
-function undef(val: undefined) {
+function Undef(val: undefined) {
     if (val === undefined) return val
 
     return fail(new Error('is not a undefined'))
 }
 
-function string(val: string) {
+function Str(val: string) {
     if (typeof val === 'string') return val
 
     return fail(new Error('is not a string'))
@@ -91,9 +93,9 @@ function string(val: string) {
 
 type Metadata = Record<string, any>
 
-type Value<Input = any, Output = any> = ((val: Input) => Output) & { metadata?: Metadata }
+export type Value<Input = any, Output = any> = ((val: Input) => Output) & { metadata?: Metadata }
 
-function variant<Sub extends Value[]>(...sub: Sub) {
+function Var<Sub extends Value[]>(...sub: Sub) {
     const fn: Value<Parameters<Sub[number]>[0], ReturnType<Sub[number]>> = (
         val: Parameters<Sub[number]>[0]
     ) => {
@@ -124,7 +126,7 @@ function variant<Sub extends Value[]>(...sub: Sub) {
     return fn
 }
 
-function optional<Sub extends Value>(sub: Sub) {
+function Opt<Sub extends Value>(sub: Sub) {
     return (val: Parameters<Sub>[0] | undefined) => {
         if (val === undefined) return undefined
 
@@ -132,25 +134,22 @@ function optional<Sub extends Value>(sub: Sub) {
     }
 }
 
-function wrapper<Pre extends Value, Obj extends { new (val: ReturnType<Pre>): any }>(pre: Pre, Obj: Obj) {
+export function wrapper<Pre extends Value, Obj extends { new (val: ReturnType<Pre>): any }>(
+    pre: Pre,
+    Obj: Obj
+) {
     return (val: Parameters<Pre>[0]) => new Obj(pre(val)) as InstanceType<Obj>
 }
 
-function tag<In, Out, Tag extends string>(tag: Tag, sub: Value<In, Out>) {
-    return (value: In) => ({ t: tag, v: sub(value) })
-}
-
 export const s = {
-    str: string,
-    bool: boolean,
-    num: number,
-    var: variant,
-    opt: optional,
-    arr: array,
-    rec: record,
-    undef,
-    tag,
-    wrapper,
+    Str,
+    Bool,
+    Num,
+    Var,
+    Opt,
+    List,
+    Rec,
+    Undef,
 } as const
 
-export type Validator<Params> = Value<any, Params>
+export type Validator<Params> = Value<Params, Params>

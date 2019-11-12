@@ -1,4 +1,4 @@
-import { Validator } from './schema'
+import { Validator, RecMetadata } from './schema'
 
 export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> & Defaults
 
@@ -23,16 +23,15 @@ export type RouteConfig<
     Output = any,
     Data = any,
     Defaults extends Partial<Output> | undefined = any,
-    Context = any,
 > = {
-    readonly input: Validator<Input>
+    readonly input?: Validator<Input>
     // readonly output: Validator<Output>
     readonly defaults?: Defaults
     readonly data?: Data
     readonly conditions?: Partial<Record<keyof Input, string | string[]>>
     pattern(p: Tokens<Input>): string
-    postMatch: (p: Input, context: Context) => Output
-    preBuild: (p: Output, context: Context) => Input
+    toQuery: (p: Output) => Input
+    fromQuery: ((p: Input) => Output) & RecMetadata
 }
 
 export type AllRoutesConfig<K = any> = {

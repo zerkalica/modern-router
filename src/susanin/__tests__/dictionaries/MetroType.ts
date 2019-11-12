@@ -9,22 +9,9 @@ const metroTypeMap = invert(metroSeoMap)
 type MetroSeoKey = keyof typeof metroSeoMap
 type MetroTypeKey = keyof typeof metroTypeMap
 
-export class MetroSeoTag {
-    readonly value: MetroSeoKey
-    constructor(value: MetroSeoKey) {
-        this.value = value
-    }
-    toValue() {
-        return this.value
-    }
-    toString() {
-        return this.value
-    }
-}
-
 export function MetroSeo(value: MetroSeoKey) {
     if (!metroSeoMap[value]) throw new Error(`${value} not a MetroSeo type`)
-    return new MetroSeoTag(value)
+    return value
 }
 
 export function MetroType(value: MetroTypeKey) {
@@ -32,10 +19,10 @@ export function MetroType(value: MetroTypeKey) {
     return value
 }
 
-export function metroSeoToType(v: MetroSeoKey | MetroSeoTag) {
-    return metroSeoMap[v instanceof MetroSeoTag ? v.value : v]
+export function metroSeoToType(v: string | undefined): MetroTypeKey | undefined {
+    return metroSeoMap[v as MetroSeoKey]
 }
 
-export function metroTypeToSeo(v: MetroTypeKey) {
-    return new MetroSeoTag(metroTypeMap[v])
+export function metroTypeToSeo(v: string | undefined): MetroSeoKey | undefined {
+    return metroTypeMap[v as MetroTypeKey]
 }

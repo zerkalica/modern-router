@@ -1,17 +1,15 @@
-import { RouteConfig, AllRoutesConfig } from './RouteType'
-import { Validator } from './schema'
+import { RouteConfig, AllRoutesConfig } from './RouterInterfaces'
 
 export function route<
-    Context,
-    Input = any,
-    Output = any,
+    Input,
+    Output,
+    Context = any,
     Data = any,
     Defaults extends Partial<Output> | undefined = any
 >(
-    input: Validator<Input>,
-    config: Omit<RouteConfig<Input, Output, Data, Defaults, Context>, 'input' | 'output'>
+    config: RouteConfig<Input, Output, Data, Defaults, Context>
 ): RouteConfig<Input, Output, Data, Defaults, Context> {
-    return {...config, input}
+    return config
 }
 
 /**

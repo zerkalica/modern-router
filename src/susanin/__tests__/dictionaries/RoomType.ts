@@ -15,22 +15,9 @@ const roomTypeMap = invert(roomSeoMap)
 type RoomSeoKey = keyof typeof roomSeoMap
 type RoomTypeKey = keyof typeof roomTypeMap
 
-export class RoomSeoTag {
-    readonly value: RoomSeoKey
-    constructor(value: RoomSeoKey) {
-        this.value = value
-    }
-    toValue() {
-        return this.value
-    }
-    toString() {
-        return this.value
-    }
-}
-
 export function RoomSeo(value: RoomSeoKey) {
     if (!roomSeoMap[value]) throw new Error(`${value} not a RoomSeo type`)
-    return new RoomSeoTag(value)
+    return value
 }
 
 export function RoomType(value: RoomTypeKey) {
@@ -38,10 +25,10 @@ export function RoomType(value: RoomTypeKey) {
     return value
 }
 
-export function roomSeoToType(v: RoomSeoKey | RoomSeoTag) {
-    return roomSeoMap[v instanceof RoomSeoTag ? v.value : v]
+export function roomSeoToType(v: string | undefined): RoomTypeKey | undefined {
+    return roomSeoMap[v as RoomSeoKey]
 }
 
-export function roomTypeToSeo(v: RoomTypeKey) {
-    return new RoomSeoTag(roomTypeMap[v])
+export function roomTypeToSeo(v: string | undefined): RoomSeoKey | undefined {
+    return roomTypeMap[v as RoomTypeKey]
 }

@@ -1,27 +1,38 @@
 import { routerSusanin, route, s } from '../..'
 import { PageNotFoundError } from '../../Router'
 
+const SearchSeo = s.Rec({
+    region: s.Opt(s.Str),
+    stationId: s.Str,
+})
+const SearchType = s.Rec({
+    region: s.Opt(s.Str),
+    stationId: s.Num,
+})
+
+function searchSeoToType(raw: ReturnType<typeof SearchSeo>) {
+    return SearchType({
+        region: raw.region,
+        stationId: Number(raw.region)
+    })
+}
+searchSeoToType.metadata = SearchType.metadata
+
+function searchTypeToSeo(params: ReturnType<typeof SearchType>) {
+    return SearchSeo({
+        region: params.region,
+        stationId: String(params.region)
+    })
+}
+
+
 describe('RouterSusanin.base', () => {
     const routerConfig = route.config({
         search: route(
-            s.rec({
-                region: s.opt(s.str),
-                stationId: s.str,
-            }),
             {
                 pattern: p => `/region(/${p.region})/${p.stationId}`,
-                postMatch(raw) {
-                    return {
-                        stationId: Number(raw.stationId),
-                        region: raw.region,
-                    }
-                },
-                preBuild(params) {
-                    return {
-                        stationId: String(params.stationId),
-                        region: params.region,
-                    }
-                },
+                fromQuery: searchSeoToType,
+                toQuery: searchTypeToSeo,
             }
         ),
     })

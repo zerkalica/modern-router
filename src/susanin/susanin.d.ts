@@ -45,6 +45,10 @@ declare module 'susanin' {
     > = [Route<Output, Data, Defaults, Name>, Output]
 
     class Susanin {
+        static Route: new <Input, Output, Data, Defaults, Name extends string>(
+            config: SusaninRouteConfig<Input, Output, Data, Defaults, Name>
+        ) => Route<Output, Data, Defaults, Name>
+
         addRoute<Input, Output, Data, Defaults extends Partial<Output> | undefined, Name extends string>(
             config: SusaninRouteConfig<Input, Output, Data, Defaults, Name>
         ): Route<Output, Data, Defaults, Name>

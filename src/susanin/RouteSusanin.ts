@@ -1,6 +1,6 @@
 import { Route as RouteSusaninRaw } from 'susanin'
 import { Router } from '../Router'
-import { Route, PartialDefaults, AllRoutesConfig } from '../RouteType'
+import { Route, PartialDefaults, AllRoutesConfig } from '../RouterInterfaces'
 
 export class RouteSusanin<
     Config extends AllRoutesConfig,

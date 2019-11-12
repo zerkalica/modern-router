@@ -1,4 +1,4 @@
-import { RouteConfig, AllRoutesConfig, AllRoutes, Route, CurrentRoute } from './RouteType'
+import { RouteConfig, AllRoutesConfig, AllRoutes, Route, CurrentRoute } from './RouterInterfaces'
 
 export interface HistoryLike {
     pushState(data: any, title: string, url?: string | null): void
@@ -88,7 +88,7 @@ export abstract class Router<Config extends AllRoutesConfig, Context> {
     }
 
     protected abstract createRoute<Input, Output, Data, Defaults, Name extends string>(
-        config: RouteConfig<Input, Output, Data, Defaults, Context>,
+        config: RouteConfig<Input, Output, Data, Defaults>,
         name: Name
     ): Route<Output, Data, Defaults, Name>
 

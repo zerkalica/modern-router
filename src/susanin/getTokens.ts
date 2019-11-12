@@ -1,11 +1,11 @@
-import { Validator } from '../schema'
-import { Tokens } from '../RouteType'
+import { RecMetadata } from '../schema'
+import { Tokens } from '../RouterInterfaces'
 
 function tokenFromKey(key: string): string {
     return `<${key}>`
 }
 
-export function getTokens<Params>(validate: Validator<Params>): Tokens<Params> {
+export function getTokens<Params>(validate: RecMetadata): Tokens<Params> {
     const metadata = validate.metadata
     if (!metadata) throw new Error(`Schema ${validate} has no metadata`)
     const tokens = {} as Record<string, string | object>
