@@ -1,5 +1,4 @@
-import { routerSusanin, route, s } from '../..'
-import { PageNotFoundError } from '../../Router'
+import { Router, routerConfig, PageNotFoundError, route, s } from '../..'
 
 const SearchSeo = s.Rec({
     region: s.Opt(s.Str),
@@ -13,58 +12,58 @@ const SearchType = s.Rec({
 function searchSeoToType(raw: ReturnType<typeof SearchSeo>) {
     return SearchType({
         region: raw.region,
-        stationId: Number(raw.region)
+        stationId: Number(raw.stationId),
     })
 }
-searchSeoToType.metadata = SearchType.metadata
 
 function searchTypeToSeo(params: ReturnType<typeof SearchType>) {
     return SearchSeo({
         region: params.region,
-        stationId: String(params.region)
+        stationId: String(params.stationId),
     })
 }
+searchTypeToSeo.metadata = SearchSeo.metadata
 
+const searchRoute = route({
+    pattern: p => `/region(/${p.region})/${p.stationId}`,
+    fromQuery: searchSeoToType,
+    toQuery: searchTypeToSeo,
+})
 
 describe('RouterSusanin.base', () => {
-    const routerConfig = route.config({
-        search: route(
-            {
-                pattern: p => `/region(/${p.region})/${p.stationId}`,
-                fromQuery: searchSeoToType,
-                toQuery: searchTypeToSeo,
-            }
-        ),
+    const routes = routerConfig({
+        search: searchRoute,
     })
 
     function createRouter(pathname: string, hostname = 'example.com') {
-        return routerSusanin({
+        return new Router({
             location: {
                 hostname,
                 pathname,
             },
             context: {},
-            routerConfig,
+            routes,
         })
     }
 
     it('throws PageNotFoundError on wrong path', () => {
-        const routes = createRouter('/')
-        expect(() => routes.current).toThrow(PageNotFoundError)
+        const router = createRouter('/')
+        expect(() => router.current).toThrow(PageNotFoundError)
     })
 
     describe('regular route', () => {
-        let routes: ReturnType<typeof createRouter>
+        let router: ReturnType<typeof createRouter>
         beforeEach(() => {
-            routes = createRouter('/region/1/2')
+            router = createRouter('/region/1/2')
         })
 
         it('match by url', () => {
-            expect(routes.current.name).toEqual('search')
+            expect(router.current.name).toEqual('search')
         })
-    
+
         it('resolve parameters', () => {
-            const current = routes.current
+            const current = router.current
+
             expect(current.params).toEqual({
                 region: '1',
                 stationId: 2,
@@ -72,7 +71,9 @@ describe('RouterSusanin.base', () => {
         })
 
         it('build url', () => {
-            expect(routes.search.url({ stationId: 1, region: 'moscow' })).toEqual('/region/moscow/1')
+            expect(
+                router.routes.search.url({ stationId: 1, region: 'moscow' })
+            ).toEqual('/region/moscow/1')
         })
     })
 

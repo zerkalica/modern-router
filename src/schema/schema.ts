@@ -1,3 +1,5 @@
+import { failHidden } from './fail'
+
 type Merge<Intersection> = keyof Intersection extends string
     ? {
           [Key in keyof Intersection]: Merge<Intersection[Key]>
@@ -11,14 +13,6 @@ type ExtractUpper<Input, Lower, Upper> = {
 }[keyof Input]
 
 type PickUpper<Input, Lower, Upper> = Pick<Input, ExtractUpper<Input, Lower, Upper>>
-
-function fail(error: any): never {
-    throw error
-}
-
-function failHidden(error: any): never {
-    throw error /// Use 'Never Pause Here' breakpoint in DevTools or simply blackbox this script
-}
 
 export type RecMetadata = {metadata: Record<string, any>}
 
@@ -70,25 +64,25 @@ function List<Sub extends Value>(sub: Sub) {
 function Num(val: number) {
     if (typeof val === 'number') return val
 
-    return fail(new Error('is not a number'))
+    throw new Error('is not a number')
 }
 
 function Bool(val: boolean) {
     if (typeof val === 'boolean') return val
 
-    return fail(new Error('is not a boolean'))
+    throw new Error('is not a boolean')
 }
 
 function Undef(val: undefined) {
     if (val === undefined) return val
 
-    return fail(new Error('is not a undefined'))
+    throw new Error('is not a undefined')
 }
 
 function Str(val: string) {
     if (typeof val === 'string') return val
 
-    return fail(new Error('is not a string'))
+    throw new Error('is not a string')
 }
 
 type Metadata = Record<string, any>

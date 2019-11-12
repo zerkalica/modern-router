@@ -1,48 +1,40 @@
-import { Validator, RecMetadata } from './schema'
-
-export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> & Defaults
+export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> &
+    Defaults
 
 type UnionOf<T> = T[keyof T]
 
 type Primitive = string | number | boolean | symbol | undefined
 
-export type RawParams<Params> = {
-    [P in keyof Params]: Params[P] extends Primitive
-        ? string
-        : (Params[P] extends Primitive[] ? string[] : RawParams<Params[P]>)
-}
-
 export type Tokens<Params> = {
     [P in keyof Params]-?: Params[P] extends Primitive
         ? string
-        : (Params[P] extends any[] ? never : Tokens<Params[P]>)
+        : Params[P] extends any[]
+        ? never
+        : Tokens<Params[P]>
 }
 
-export type RouteConfig<
-    Input = any,
+export interface RouteType<
     Output = any,
-    Data = any,
-    Defaults extends Partial<Output> | undefined = any,
-> = {
-    readonly input?: Validator<Input>
-    // readonly output: Validator<Output>
+    Defaults = any,
+    Context = any
+> {
     readonly defaults?: Defaults
-    readonly data?: Data
-    readonly conditions?: Partial<Record<keyof Input, string | string[]>>
-    pattern(p: Tokens<Input>): string
-    toQuery: (p: Output) => Input
-    fromQuery: ((p: Input) => Output) & RecMetadata
+    toUrl(params: PartialDefaults<Output, Defaults>, context?: Context): string
+    fromUrl(url: string, context?: Context): Output
 }
 
-export type AllRoutesConfig<K = any> = {
-    [P in keyof K]: P extends 'current' ? never : (K[P] extends RouteConfig ? K[P] : never)
+export type AllRouteTypes<RouteTypes = any> = {
+    [P in keyof RouteTypes]: RouteTypes[P] extends RouteType ? RouteTypes[P] : never
 }
 
-export interface Route<
+export type PickContext<RouteTypes = any> = UnionOf<{
+    [P in keyof RouteTypes]: RouteTypes[P] extends RouteType<any, any, infer Context> ? Context : never
+}>
+
+export interface IRoute<
     Output = any,
-    Data = any,
-    Defaults extends Partial<Output> | undefined = undefined,
-    Name = any
+    Defaults = any,
+    Name extends string = any
 > {
     readonly name: Name
     readonly params: Output
@@ -52,24 +44,12 @@ export interface Route<
     url(params: PartialDefaults<Output, Defaults>): string
 }
 
-export type RouteConfigToRoute<Config, Name extends string> = Config extends RouteConfig<
-    infer Params,
-    infer Data,
-    infer Defaults
->
-    ? Route<Params, Data, Defaults, Name>
-    : never
-
-export type AllRoutes<Config> = {
+export type AllRoutes<Config extends AllRouteTypes> = {
     [Name in keyof Config]: Name extends string
-        ? (Config[Name] extends RouteConfig ? Omit<RouteConfigToRoute<Config[Name], Name>, 'params'> : never)
-        : never
-} & { current: CurrentRoute<Config> }
-
-export type AllRoutesS<Config> = {
-    [Name in keyof Config]: Name extends string
-        ? (Config[Name] extends RouteConfig ? RouteConfigToRoute<Config[Name], Name> : never)
+        ? Config[Name] extends RouteType<infer Output, infer Defaults>
+            ? IRoute<Output, Defaults, Name>
+            : never
         : never
 }
 
-export type CurrentRoute<Config> = UnionOf<AllRoutesS<Config>>
+export type CurrentRoute<Config> = UnionOf<AllRoutes<Config>>

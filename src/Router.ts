@@ -1,4 +1,11 @@
-import { RouteConfig, AllRoutesConfig, AllRoutes, Route, CurrentRoute } from './RouterInterfaces'
+import {
+    AllRouteTypes,
+    AllRoutes,
+    CurrentRoute,
+    PickContext,
+} from './RouterInterfaces'
+import { Route, IRouter, RouteNotFoundError } from './Route'
+import { failHidden } from './schema'
 
 export interface HistoryLike {
     pushState(data: any, title: string, url?: string | null): void
@@ -21,13 +28,21 @@ export interface LocationStoreOptions {
 }
 
 export class PageNotFoundError extends Error {
-    constructor(url: string) {
-        super(`Route not found for url "${url}"`)
+    readonly url: string
+    readonly routes: RouteNotFoundError[]
+
+    constructor(url: string, routes: RouteNotFoundError[]) {
+        super(
+            `Page not found for url "${url}", routes: ${JSON.stringify(routes)}`
+        )
+        this.url = url
+        this.routes = routes
     }
 }
 
-export interface RouterOptions<Config extends AllRoutesConfig, Context> extends LocationStoreOptions {
-    routerConfig: Config
+export interface RouterOptions<RouteTypes extends AllRouteTypes, Context>
+    extends LocationStoreOptions {
+    routes: RouteTypes
     context: Context
 }
 
@@ -39,58 +54,53 @@ const defaultLocation: Required<LocationLike> = {
     hostname: '',
 }
 
-export abstract class Router<Config extends AllRoutesConfig, Context> {
+export class Router<
+    RouteTypes extends AllRouteTypes,
+    Context extends PickContext<RouteTypes> = PickContext<RouteTypes>
+> implements IRouter<Context> {
     protected location: Required<LocationLike>
     protected refresh: () => void
     protected history?: HistoryLike
     protected target?: Window
-    protected context: Context
-    protected routerConfig: Config
+    protected types: RouteTypes
+
+    readonly context: Context
 
     constructor({
         location = defaultLocation,
         refresh = empty,
         history,
         target,
-        routerConfig,
+        routes,
         context,
-    }: RouterOptions<Config, Context>) {
-        this.location = {...defaultLocation, ...location}
+    }: RouterOptions<RouteTypes, Context>) {
+        this.location = { ...defaultLocation, ...location }
         this.refresh = refresh
         this.history = history
         this.target = target
-        this.routerConfig = routerConfig
+        this.types = routes
         this.context = context
         if (target) target.addEventListener('popstate', this.onPopState)
     }
 
-    private _routes: AllRoutes<Config> | undefined = undefined
+    private routesCache: AllRoutes<RouteTypes> | undefined = undefined
 
-    get routes(): AllRoutes<Config> {
-        if (this._routes) return this._routes
+    get routes(): AllRoutes<RouteTypes> {
+        if (this.routesCache) return this.routesCache
 
-        const { routerConfig } = this
-        const keys = Object.keys(routerConfig)
-        const routes = {} as Record<string, Route>
-
-        Object.defineProperty(routes, 'current', {
-            get: this.current.bind(this),
-            enumerable: true,
-        })
+        const { types } = this
+        const keys = Object.keys(types)
+        const routes = {} as Record<keyof RouteTypes, any>
 
         for (let key of keys) {
-            routes[key] = this.createRoute(routerConfig[key], key)
+            const route = new Route(types[key], this, key)
+            routes[key as keyof RouteTypes] = route
         }
 
-        this._routes = routes as AllRoutes<Config>
+        this.routesCache = routes as AllRoutes<RouteTypes>
 
-        return this._routes
+        return this.routesCache
     }
-
-    protected abstract createRoute<Input, Output, Data, Defaults, Name extends string>(
-        config: RouteConfig<Input, Output, Data, Defaults>,
-        name: Name
-    ): Route<Output, Data, Defaults, Name>
 
     destructor() {
         const target = this.target
@@ -104,10 +114,28 @@ export abstract class Router<Config extends AllRoutesConfig, Context> {
     private nextUrl: string | undefined = undefined
 
     get currentUrl(): string {
-        return this.nextUrl === undefined ? this.location.pathname + this.location.search : this.nextUrl
+        return this.nextUrl === undefined
+            ? this.location.pathname + this.location.search
+            : this.nextUrl
     }
 
-    protected abstract current(): CurrentRoute<Config>
+    get current(): CurrentRoute<RouteTypes> {
+        const { routes, currentUrl } = this
+        const errors: RouteNotFoundError[] = []
+        const keys = Object.keys(routes)
+        for (let key of keys) {
+            const route = routes[key]
+            try {
+                route.params
+                return (route as unknown) as CurrentRoute<RouteTypes>
+            } catch (e) {
+                if (e instanceof Promise) return failHidden(e)
+                if (!(e instanceof RouteNotFoundError)) return failHidden(e)
+                errors.push(e)
+            }
+        }
+        throw new PageNotFoundError(currentUrl, errors)
+    }
 
     update(nextUrl: string, replace: boolean = false) {
         this.nextUrl = nextUrl
@@ -120,3 +148,32 @@ export abstract class Router<Config extends AllRoutesConfig, Context> {
 }
 
 function empty() {}
+
+/**
+ *
+ * ```ts
+ * const r = route.config({
+ *    search: route(
+ *    s.rec({
+ *        controller: s.num,
+ *        action: s.opt(s.num),
+ *        id: s.str,
+ *    }),
+ *    {
+ *        pattern: p => `/${p.action}/${p.id}/qwe`,
+ *    }),
+ *    offer: route(
+ *    s.rec({
+ *        id: s.str,
+ *    }),
+ *    {
+ *        pattern: p => `/offer/${p.id}`,
+ *    }),
+ * })
+ * ```
+ **/
+export function routerConfig<Config>(
+    config: AllRouteTypes<Config>
+): AllRouteTypes<Config> {
+    return config
+}

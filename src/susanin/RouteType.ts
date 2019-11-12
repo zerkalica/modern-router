@@ -1,51 +1,71 @@
-import { RouteConfig, PartialDefaults } from '../RouterInterfaces'
+import { PartialDefaults, RouteType, Tokens } from '../RouterInterfaces'
 import Susanin, { Route as SusaninRoute, SusaninRouteConfig } from 'susanin'
 import { getTokens } from './getTokens'
+import { RecMetadata } from '../schema'
+import { RouteNotFoundError } from '../Route'
 
-export class SusaninRouteType<Input, Output, Data, Defaults, Name extends string> {
-    protected susaninRoute: SusaninRoute<Output, Data, Defaults, Name>
+export type SusaninRouteTypeOptions<
+    Input,
+    Output,
+    Defaults extends Partial<Output> | undefined,
+    Context
+> = {
+    readonly defaults?: Defaults
+    pattern(p: Tokens<Input>): string
+    toQuery: ((p: Output, context: Context) => Input) & RecMetadata
+    fromQuery: (p: Input, context: Context) => Output
+}
 
-    constructor({
-        data,
-        defaults,
-        pattern,
-        fromQuery,
-        toQuery,
-        conditions,
-    }: RouteConfig<Input, Output, Data, Defaults>) {
+class SusaninRouteType<Input, Output, Defaults, Context>
+    implements RouteType<Output, Defaults, Context> {
+    protected susaninRoute: SusaninRoute<Output, Defaults>
+    protected _context: Context | undefined = undefined
+
+    constructor(options: SusaninRouteTypeOptions<Input, Output, Defaults, Context>) {
+        const pattern = options.pattern(getTokens(options.toQuery))
         const susaninRouteConfig: SusaninRouteConfig<
             Input,
             Output,
-            Data,
+            any,
             Defaults,
-            Name
+            string
         > = {
-            postMatch: raw => fromQuery(raw),
-            preBuild: params => toQuery(params),
-            data,
-            defaults,
-            conditions,
-            pattern: pattern(getTokens(fromQuery)),
-            name,
+            postMatch: raw => options.fromQuery(raw, this.context),
+            preBuild: params => options.toQuery(params, this.context),
+            defaults: options.defaults,
+            // conditions,
+            pattern,
+            name: pattern,
         }
 
         this.susaninRoute = new Susanin.Route(susaninRouteConfig)
+    }
+
+    protected get context(): Context {
+        if (!this._context) throw new Error(`Context is not set in Router`)
+        return this._context
     }
 
     get name() {
         return this.susaninRoute.getName()
     }
 
-    toQuery(params: PartialDefaults<Output, Defaults>): string {
+    toUrl(params: PartialDefaults<Output, Defaults>, context?: Context): string {
+        this._context = context
         return this.susaninRoute.build(params)
     }
 
-    fromQuery(url: string): Output {
+    fromUrl(url: string, context?: Context): Output {
+        this._context = context
         const params = this.susaninRoute.match(url)
-        if (!params)
-            throw new Error(
-                `Url ${url} not matched by ${this.susaninRoute.getName()}`
-            )
+        if (!params) throw new RouteNotFoundError(url, this)
+
         return params
     }
+}
+
+export function route<Input, Output, Defaults, Context>(
+    options: SusaninRouteTypeOptions<Input, Output, Defaults, Context>
+): RouteType<Output, Defaults, Context> {
+    return new SusaninRouteType(options)
 }
