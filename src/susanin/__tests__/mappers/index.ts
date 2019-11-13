@@ -1,4 +1,3 @@
-export * from './metro'
-export * from './regionMapper'
+export * from './regions'
 export * from './renovationMapper'
 export * from './roomMapper'

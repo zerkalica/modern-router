@@ -1,7 +1,7 @@
 import { Router, routerConfig } from '../..'
 
 import { searchRoute } from './routes'
-import { metroMskMapper, metroSpbMapper } from './mappers'
+import { mskMetroMapper, spbMetroMapper } from './mappers'
 import { memoFetch, toPromise } from './memoFetch'
 
 describe('RouterSusanin.serp', () => {
@@ -12,9 +12,9 @@ describe('RouterSusanin.serp', () => {
     function createFetch() {
         return memoFetch((url: string) => {
             if (url === '/region/MSK/metro')
-                return Promise.resolve(metroMskMapper as any)
+                return Promise.resolve(mskMetroMapper as any)
             if (url === '/region/SPB/metro')
-                return Promise.resolve(metroSpbMapper as any)
+                return Promise.resolve(spbMetroMapper as any)
             throw new Error('404')
         })
     }

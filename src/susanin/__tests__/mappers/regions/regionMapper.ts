@@ -1,4 +1,4 @@
-import { SeoMapper } from '../../../schema'
+import { SeoMapper } from '../../../../schema'
 
 export const regionMapper = new SeoMapper('regionMapper', {
     'moskva': 'MSK',

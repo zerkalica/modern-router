@@ -1,6 +1,6 @@
 import { Invert, invert } from './invert'
 
-export class SeoMapper<SeoMap extends Record<string, string> = Record<string, string>> {
+export class SeoMapper<SeoMap extends Record<string, string | number> = Record<string, string | number>> {
     protected seoMap: SeoMap
     protected typesMap: Invert<SeoMap>
     readonly name: string
