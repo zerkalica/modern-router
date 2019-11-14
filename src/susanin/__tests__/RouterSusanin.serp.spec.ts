@@ -79,7 +79,7 @@ describe('RouterSusanin.serp', () => {
                 '/sankt-peterburg/nedvizhimost/kupit-kvartiru/3-komnaty/metro-devyatkino?renovation=EURO'
             )
             expect(current.params).toEqual({
-                metroIds: [3333],
+                metroIds: [894],
                 region: 'SPB',
                 renovation: ['EURO'],
                 rooms: ['ROOM_3'],
@@ -116,7 +116,7 @@ describe('RouterSusanin.serp', () => {
 
                 const url = await toPromise(() =>
                     router.routes.search.url({
-                        metroIds: [5223],
+                        metroIds: [14567],
                         region: 'MSK',
                         renovation: [],
                         rooms: ['ROOM_1'],
@@ -124,7 +124,7 @@ describe('RouterSusanin.serp', () => {
                 )
 
                 expect(url).toEqual(
-                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/metro-admiralteiskaya'
+                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/metro-arbatskaya'
                 )
             })
             it('metro', async () => {
@@ -132,7 +132,7 @@ describe('RouterSusanin.serp', () => {
 
                 const url = await toPromise(() =>
                     router.routes.search.url({
-                        metroIds: [5223],
+                        metroIds: [14567],
                         region: 'MSK',
                         renovation: [],
                         rooms: [],
@@ -140,7 +140,7 @@ describe('RouterSusanin.serp', () => {
                 )
 
                 expect(url).toEqual(
-                    '/moskva/nedvizhimost/kupit-kvartiru/metro-admiralteiskaya'
+                    '/moskva/nedvizhimost/kupit-kvartiru/metro-arbatskaya'
                 )
             })
             it('room and renovation', async () => {
@@ -164,7 +164,7 @@ describe('RouterSusanin.serp', () => {
 
                 const url = await toPromise(() =>
                     router.routes.search.url({
-                        metroIds: [5223],
+                        metroIds: [14567],
                         region: 'MSK',
                         renovation: ['EURO'],
                         rooms: ['ROOM_1'],
@@ -172,7 +172,7 @@ describe('RouterSusanin.serp', () => {
                 )
 
                 expect(url).toEqual(
-                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/metro-admiralteiskaya?renovation=EURO'
+                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/metro-arbatskaya?renovation=EURO'
                 )
             })
 
@@ -181,7 +181,7 @@ describe('RouterSusanin.serp', () => {
 
                 const url = await toPromise(() =>
                     router.routes.search.url({
-                        metroIds: [5223, 3333],
+                        metroIds: [14567, 3333],
                         region: 'MSK',
                         renovation: ['EURO'],
                         rooms: ['ROOM_1'],
@@ -189,7 +189,7 @@ describe('RouterSusanin.serp', () => {
                 )
 
                 expect(url).toEqual(
-                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/remont-euro?metroIds=5223&metroIds=3333'
+                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata/remont-euro?metroIds=14567&metroIds=3333'
                 )
             })
         })
@@ -217,7 +217,7 @@ describe('RouterSusanin.serp', () => {
 
                 const url = await toPromise(() =>
                     router.routes.search.url({
-                        metroIds: [5223, 1231],
+                        metroIds: [14567, 1231],
                         region: 'MSK',
                         renovation: [],
                         rooms: ['ROOM_1'],
@@ -225,7 +225,7 @@ describe('RouterSusanin.serp', () => {
                 )
 
                 expect(url).toEqual(
-                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata?metroIds=5223&metroIds=1231'
+                    '/moskva/nedvizhimost/kupit-kvartiru/1-komnata?metroIds=14567&metroIds=1231'
                 )
             })
         })
@@ -243,7 +243,7 @@ describe('RouterSusanin.serp', () => {
                     })
                 ).catch(e =>
                     expect(e.message).toContain(
-                        '3333 not a value of metroMskMapper'
+                        '3333 not a value of mskMetroMapper'
                     )
                 )
             })

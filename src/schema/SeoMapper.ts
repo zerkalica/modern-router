@@ -15,6 +15,14 @@ export class SeoMapper<SeoMap extends Record<string, string | number> = Record<s
         return this.name
     }
 
+    keys(): (keyof SeoMap)[] {
+        return Object.keys(this.seoMap)
+    }
+ 
+    values(): (keyof Invert<SeoMap>)[] {
+        return Object.keys(this.typesMap) as unknown as (keyof Invert<SeoMap>)[]
+    }
+
     Seo = (value: keyof SeoMap) => {
         if (!this.seoMap[value]) throw new Error(`${value} not key of ${this}`)
         return value

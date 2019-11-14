@@ -28,8 +28,8 @@ const SearchSeo = s.Rec({
     rooms: s.Opt(s.List(roomMapper.Type)),
     renovation: s.Opt(s.Var(renovationMapper.Type, s.List(renovationMapper.Type))),
     metroIds: s.Opt(s.List(s.Num)),
-    part1: s.Opt(s.Var(s.Undef, roomMapper.Seo, renovationMapper.Seo, s.Str)),
-    part2: s.Opt(s.Var(s.Undef, renovationMapper.Seo, s.Str)),
+    part1: s.Opt(s.Str),
+    part2: s.Opt(s.Str),
 })
 
 function searchSeoToType(
