@@ -1,55 +1,32 @@
-export type PartialDefaults<Params, Defaults> = Omit<Params, keyof Defaults> &
-    Defaults
+export interface LocationLike {
+    search: string;
+    origin: string;
+    pathname: string;
+    hostname: string;
+    port: string;
+    hash: string;
+    protocol: string;
 
-type UnionOf<T> = T[keyof T]
+    method?: string;
+}
 
-type Primitive = string | number | boolean | symbol | undefined
+export interface HistoryLike {
+    pushState(
+        data: object | undefined | null,
+        title: string,
+        url?: string | null
+    ): void;
+    replaceState(
+        data: object | undefined | null,
+        title: string,
+        url?: string | null
+    ): void;
+}
 
 export type Tokens<Params> = {
-    [P in keyof Params]-?: Params[P] extends Primitive
+    [P in keyof Params]-?: Params[P] extends PropertyKey
         ? string
-        : Params[P] extends any[]
+        : Params[P] extends {}[]
         ? never
-        : Tokens<Params[P]>
-}
-
-export interface RouteType<
-    Output = any,
-    Defaults = any,
-    Context = any
-> {
-    readonly defaults?: Defaults
-    toUrl(params: PartialDefaults<Output, Defaults>, context?: Context): string
-    fromUrl(url: string, context?: Context): Output
-}
-
-export type AllRouteTypes<RouteTypes = any> = {
-    [P in keyof RouteTypes]: RouteTypes[P] extends RouteType ? RouteTypes[P] : never
-}
-
-export type PickContext<RouteTypes = any> = UnionOf<{
-    [P in keyof RouteTypes]: RouteTypes[P] extends RouteType<any, any, infer Context> ? Context : never
-}>
-
-export interface IRoute<
-    Output = any,
-    Defaults = any,
-    Name extends string = any
-> {
-    readonly name: Name
-    readonly params: Output
-
-    push(params: PartialDefaults<Output, Defaults>): void
-    replace(params: PartialDefaults<Output, Defaults>): void
-    url(params: PartialDefaults<Output, Defaults>): string
-}
-
-export type AllRoutes<Config extends AllRouteTypes> = {
-    [Name in keyof Config]: Name extends string
-        ? Config[Name] extends RouteType<infer Output, infer Defaults>
-            ? IRoute<Output, Defaults, Name>
-            : never
-        : never
-}
-
-export type CurrentRoute<Config> = UnionOf<AllRoutes<Config>>
+        : Tokens<Params[P]>;
+};

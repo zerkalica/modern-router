@@ -2,14 +2,16 @@
   "name": "modern-router",
   "version": "3.0.0",
   "description": "Strongly typed, framework agnostic router",
-  "main": "dist/index.js",
-  "types": "dist/index.d.ts",
+  "main": "dist/cjs/index.js",
+  "module": "dist/mjs/index.js",
+  "types": "dist/cjs/index.d.ts",
   "license": "MIT",
   "scripts": {
-    "clean": "ts-build-scripts clean",
-    "build": "ts-build-scripts build",
-    "watch": "ts-build-scripts watch",
-    "test": "jest"
+    "clean": "rm -rf dist *.lock",
+    "build": "tsc --build --force",
+    "watch": "tsc --build --watch",
+    "test": "jest",
+    "format": "prettier --write -c 'src/**.ts'"
   },
   "author": "Stefan Zerkalica <zerkalica@gmail.com>",
   "repository": {
@@ -24,26 +26,27 @@
     "typescript"
   ],
   "files": [
-    "*.map",
-    "*.js",
-    "*.flow",
-    ".flowconfig",
-    "README.md",
-    "LICENSE",
-    "src",
-    "dist",
-    "flow-typed"
+    "*.json",
+    "*.md",
+    "dist/cjs",
+    "dist/mjs",
+    "react",
+    "server"
   ],
   "dependencies": {
-    "mol_data_all": "^1.0.1",
+    "mol_data_all": "^1.0.3",
     "susanin": "^1.0.3"
   },
   "devDependencies": {
     "@types/jest": "^24.0.22",
     "@types/node": "^12.11.7",
+    "@types/react": "^16.9.11",
     "jest": "^24.9.0",
-    "ts-build-scripts": "^1.0.0",
+    "prettier": "^1.19.1",
     "ts-jest": "^24.1.0",
     "typescript": "^3.7.2"
+  },
+  "peerDependencies": {
+    "react": "*"
   }
 }

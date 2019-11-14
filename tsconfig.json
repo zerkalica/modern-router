@@ -1,7 +1,8 @@
 {
-  "extends": "./node_modules/ts-build-scripts/tsconfig.base.json",
-  "compilerOptions": {
-    "outDir": "dist",
-    "rootDir": "src"
-  }
+  "files": [],
+  "include": [],
+  "references": [
+    { "path": "./tsconfig.cjs.json" },
+    { "path": "./tsconfig.mjs.json" }
+  ]
 }

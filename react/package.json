@@ -1,0 +1,7 @@
+{
+  "name": "ts-build-scripts/react",
+  "private": true,
+  "main": "../dist/cjs/react/index.js",
+  "types": "../dist/cjs/react/index.d.ts",
+  "module": "../dist/mjs/react/index.js"
+}

@@ -1,0 +1,7 @@
+{
+  "name": "ts-build-scripts/server",
+  "private": true,
+  "main": "../dist/cjs/server/index.js",
+  "types": "../dist/cjs/server/index.d.ts",
+  "module": "../dist/mjs/server/index.js"
+}

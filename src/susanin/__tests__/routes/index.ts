@@ -1,1 +1,1 @@
-export * from './searchRoute'
+export * from './searchRoute';

@@ -1,22 +1,24 @@
-import { RecMetadata } from '../schema'
-import { Tokens } from '../RouterInterfaces'
+import { Tokens } from '../RouterInterfaces';
 
 function tokenFromKey(key: string): string {
-    return `<${key}>`
+    return `<${key}>`;
 }
 
-export function getTokens<Params>(validate: RecMetadata): Tokens<Params> {
-    const metadata = validate.metadata
-    if (!metadata) throw new Error(`Schema ${validate} has no metadata`)
-    const tokens = {} as Record<string, string | object>
-    const keys: (keyof typeof metadata)[] = Object.keys(metadata)
+export type TokenMetadata = Record<string, any>
+
+export function getTokens<Params>(metadata: TokenMetadata, prefix = ''): Tokens<Params> {
+    const tokens = {} as Record<string, string | object>;
+    const keys = Object.keys(metadata) as readonly (keyof typeof metadata)[];
+
     for (const key of keys) {
-        const item = metadata[key]
-        if (item && typeof item === 'object' && item.metadata) {
-            tokens[key] = getTokens(item)
+        const item = metadata[key];
+        const tokenKey = prefix + key 
+
+        if (item && typeof item === 'object' && item.config) {
+            tokens[tokenKey] = getTokens(item.config, tokenKey + '.');
         }
-        tokens[key] = tokenFromKey(key)
+        tokens[tokenKey] = tokenFromKey(tokenKey);
     }
 
-    return tokens as Tokens<Params>
+    return tokens as Tokens<Params>;
 }

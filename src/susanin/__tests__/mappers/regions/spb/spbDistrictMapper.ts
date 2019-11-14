@@ -1,38 +1,6 @@
-import { SeoMapper } from '../../../../../schema'
+import { SeoMapper } from '../../../../../schema';
 
 export const spbDistrictMapper = new SeoMapper('spbDistrictMapper', {
-    'rayon-admiralteiskii': 446,
-    'rayon-boksitogorskii': 14552,
-    'rayon-vasileostrovskii': 448,
-    'rayon-volosovskii': 4511,
-    'rayon-volkhovskii': 4672,
-    'rayon-vsevolozhskii': 887,
-    'rayon-viborgskii': 1060,
-    'rayon-gatchinskii': 3486,
-    'rayon-kalininskii': 451,
-    'rayon-kingiseppskii': 4318,
-    'rayon-kirishskii': 8525,
-    'rayon-kirovskii': 7811,
-    'rayon-kolpinskii': 455,
-    'rayon-krasnogvardeiskii': 456,
-    'rayon-krasnoselskii': 458,
-    'rayon-kronshtadtskii': 460,
-    'rayon-kurortnii': 461,
-    'rayon-lodeinopolskii': 3598,
-    'rayon-lomonosovskii': 996,
-    'rayon-luzhskii': 4715,
-    'rayon-moskovskii': 462,
-    'rayon-nevskii': 464,
-    'rayon-petrogradskii': 466,
-    'rayon-petrodvortsovii': 468,
-    'rayon-podporozhskii': 14561,
-    'rayon-primorskii': 471,
-    'rayon-priozerskii': 1376,
-    'rayon-pushkinskii': 473,
-    'rayon-slantsevskii': 14564,
-    'sosnovoborskii-gorodskoi-okrug': 7860,
-    'rayon-tikhvinskii': 7885,
-    'rayon-tosnenskii': 1032,
-    'rayon-frunzenskii': 474,
-    'rayon-tsentralnii': 476,
-})
+    admiralteiskii: 446,
+    tsentralnii: 476
+});

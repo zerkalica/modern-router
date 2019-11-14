@@ -1,179 +1,150 @@
-import {
-    AllRouteTypes,
-    AllRoutes,
-    CurrentRoute,
-    PickContext,
-} from './RouterInterfaces'
-import { Route, IRouter, RouteNotFoundError } from './Route'
-import { failHidden } from './schema'
-
-export interface HistoryLike {
-    pushState(data: any, title: string, url?: string | null): void
-    replaceState(data: any, title: string, url?: string | null): void
-}
-
-export interface LocationLike {
-    search?: string
-    origin?: string
-    port?: string
-    pathname: string
-    hostname: string
-}
+import { RouteOptions, Route, RouteConstructor } from './Route';
+import { HistoryLike, LocationLike } from './RouterInterfaces';
+import { failHidden, SchemaTypeError, SchemaVariantError } from './schema';
 
 export interface LocationStoreOptions {
-    location?: LocationLike
-    refresh?: () => void
-    history?: HistoryLike
-    target?: Window
+    location?: LocationLike;
+    refresh?: () => void;
+    history?: HistoryLike;
+    target?: Window;
 }
 
-export class PageNotFoundError extends Error {
-    readonly url: string
-    readonly routes: RouteNotFoundError[]
-
-    constructor(url: string, routes: RouteNotFoundError[]) {
-        super(
-            `Page not found for url "${url}", routes: ${JSON.stringify(routes)}`
-        )
-        this.url = url
-        this.routes = routes
-    }
+export interface RouterOptions<Context> extends LocationStoreOptions {
+    context: Context;
 }
 
-export interface RouterOptions<RouteTypes extends AllRouteTypes, Context>
-    extends LocationStoreOptions {
-    routes: RouteTypes
-    context: Context
-}
-
-const defaultLocation: Required<LocationLike> = {
+const defaultLocation: LocationLike = {
     search: '',
     origin: '',
     pathname: '',
     port: '80',
     hostname: '',
-}
+    hash: '',
+    protocol: 'http'
+};
 
-export class Router<
-    RouteTypes extends AllRouteTypes,
-    Context extends PickContext<RouteTypes> = PickContext<RouteTypes>
-> implements IRouter<Context> {
-    protected location: Required<LocationLike>
-    protected refresh: () => void
-    protected history?: HistoryLike
-    protected target?: Window
-    protected types: RouteTypes
+export type RouteMatch<Output, Context, Defaults> = {
+    route: Route<Output, Context, Defaults>;
+    RouteClass: RouteConstructor<Output, Context, Defaults>;
+    params: Output;
+};
 
-    readonly context: Context
+export class Router<Context = unknown> implements RouteOptions<Context> {
+    protected location: Readonly<LocationLike>;
+    protected refresh: () => void;
+    protected history?: HistoryLike;
+    protected target?: Window;
+
+    readonly context: Context;
 
     constructor({
         location = defaultLocation,
         refresh = empty,
         history,
         target,
-        routes,
-        context,
-    }: RouterOptions<RouteTypes, Context>) {
-        this.location = { ...defaultLocation, ...location }
-        this.refresh = refresh
-        this.history = history
-        this.target = target
-        this.types = routes
-        this.context = context
-        if (target) target.addEventListener('popstate', this.onPopState)
+        context
+    }: RouterOptions<Context>) {
+        this.location = location;
+        this.refresh = refresh;
+        this.history = history;
+        this.target = target;
+        this.context = context;
+        if (target) {
+            target.addEventListener('popstate', this.onPopState);
+        }
     }
 
-    private routesCache: AllRoutes<RouteTypes> | undefined = undefined
-
-    get routes(): AllRoutes<RouteTypes> {
-        if (this.routesCache) return this.routesCache
-
-        const { types } = this
-        const keys = Object.keys(types)
-        const routes = {} as Record<keyof RouteTypes, any>
-
-        for (let key of keys) {
-            const route = new Route(types[key], this, key)
-            routes[key as keyof RouteTypes] = route
-        }
-
-        this.routesCache = routes as AllRoutes<RouteTypes>
-
-        return this.routesCache
+    toString() {
+        return `${this.constructor.name} [ ${this.currentUrl} ]`
     }
 
     destructor() {
-        const target = this.target
-        if (target) target.removeEventListener('popstate', this.onPopState)
+        if (this.target) {
+            this.target.removeEventListener('popstate', this.onPopState);
+        }
     }
 
     private onPopState = () => {
-        this.refresh()
+        if (! this.target) return;
+        this.setLocation(this.target.location);
+    };
+
+    private routes = new Map<
+        RouteConstructor<unknown, Context, unknown>,
+        Route<unknown, Context, any>
+    >();
+
+    route<Output, Defaults>(
+        RouteClass: RouteConstructor<Output, Context, Defaults>
+    ): Route<Output, Context, Defaults> {
+        let route = this.routes.get(RouteClass) as Route<Output, Context, Defaults>;
+
+        if (route) return route;
+
+        route = new RouteClass(this);
+        this.routes.set(RouteClass, route);
+
+        return route;
     }
 
-    private nextUrl: string | undefined = undefined
-
-    get currentUrl(): string {
-        return this.nextUrl === undefined
-            ? this.location.pathname + this.location.search
-            : this.nextUrl
+    params<Output, Defaults>(RouteClass: RouteConstructor<Output, Context, Defaults>): Output {
+        return this.route(RouteClass).params(this.location);
     }
 
-    get current(): CurrentRoute<RouteTypes> {
-        const { routes, currentUrl } = this
-        const errors: RouteNotFoundError[] = []
-        const keys = Object.keys(routes)
-        for (let key of keys) {
-            const route = routes[key]
+    /**
+     * @throws SchemaVariantError if 404
+     * @throws Promise for React.Suspense
+     */
+    resolve(
+        routeClasses: readonly RouteConstructor<unknown, Context, unknown>[]
+    ): RouteMatch<unknown, Context, unknown> {
+        const errors: SchemaTypeError[] = [];
+
+        for (const RouteClass of routeClasses) {
+            const route = this.route(RouteClass);
             try {
-                route.params
-                return (route as unknown) as CurrentRoute<RouteTypes>
-            } catch (e) {
-                if (e instanceof Promise) return failHidden(e)
-                if (!(e instanceof RouteNotFoundError)) return failHidden(e)
-                errors.push(e)
+
+                return {
+                    route,
+                    RouteClass,
+                    params: route.params(this.location)
+                } as RouteMatch<unknown, Context, unknown>;
+            } catch (error) {
+                if (error instanceof Error) {
+                    error.message = `${route}, url "${this.currentUrl}": ${error.message}`
+                }
+
+                if ( ! (error instanceof SchemaTypeError)) return failHidden(error);
+                errors.push(error);
             }
         }
-        throw new PageNotFoundError(currentUrl, errors)
+
+        throw new SchemaVariantError(errors);
+    }
+
+    protected setLocation(location: LocationLike) {
+        if (location !== this.location && Router.key(location) === Router.key(this.location)) return;
+        this.location = location;
+        this.refresh();
+    }
+
+    get currentUrl(): string {
+        return this.location.pathname + this.location.search;
     }
 
     update(nextUrl: string, replace: boolean = false) {
-        this.nextUrl = nextUrl
         if (this.history) {
-            if (replace) this.history.replaceState(null, '', this.currentUrl)
-            else this.history.pushState(null, '', this.currentUrl)
+            if (replace) this.history.replaceState(null, '', nextUrl);
+            else this.history.pushState(null, '', nextUrl);
         }
-        this.refresh()
+        this.refresh();
+    }
+
+    static key(location: LocationLike) {
+        return (Object.keys(defaultLocation) as (keyof LocationLike & string)[])
+            .map(key => location[key])
+            .join('.');
     }
 }
 
 function empty() {}
-
-/**
- *
- * ```ts
- * const r = route.config({
- *    search: route(
- *    s.rec({
- *        controller: s.num,
- *        action: s.opt(s.num),
- *        id: s.str,
- *    }),
- *    {
- *        pattern: p => `/${p.action}/${p.id}/qwe`,
- *    }),
- *    offer: route(
- *    s.rec({
- *        id: s.str,
- *    }),
- *    {
- *        pattern: p => `/offer/${p.id}`,
- *    }),
- * })
- * ```
- **/
-export function routerConfig<Config>(
-    config: AllRouteTypes<Config>
-): AllRouteTypes<Config> {
-    return config
-}

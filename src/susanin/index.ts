@@ -1,1 +1,1 @@
-export { route, SusaninRouteTypeOptions } from './RouteType'
+export { SusaninRoute } from './SusaninRoute';

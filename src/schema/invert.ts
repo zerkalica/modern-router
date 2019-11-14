@@ -7,10 +7,12 @@ export type Invert<T extends Record<PropertyKey, PropertyKey>> = {
 }
 
 export function invert<Input extends Record<PropertyKey, PropertyKey>>(obj: Input): Invert<Input> {
-    const inverted = {} as Invert<Input>
-    for (let key in obj) {
-        inverted[obj[key]] = key
+    const inverted = {} as Invert<Input>;
+
+    // eslint-disable-next-line guard-for-in
+    for (const key in obj) {
+        inverted[obj[key]] = key;
     }
 
-    return inverted
+    return inverted;
 }
