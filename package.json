@@ -4,7 +4,7 @@
   "description": "Strongly typed, framework agnostic router",
   "main": "dist/cjs/index.js",
   "module": "dist/mjs/index.js",
-  "types": "dist/cjs/index.d.ts",
+  "types": "dist/mjs/index.d.ts",
   "license": "MIT",
   "scripts": {
     "clean": "rm -rf dist *.lock",
